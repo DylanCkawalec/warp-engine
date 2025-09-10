@@ -56,4 +56,3 @@ def upsert_agent(agent: Dict[str, Any]) -> None:
         agent.setdefault("created_at", now)
         agents.append(agent)
     save_registry(reg)
-

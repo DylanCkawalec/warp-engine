@@ -21,4 +21,3 @@ def test_run_latex_endpoint(monkeypatch, tmp_path: Path):
     body = resp.json()
     assert body["id"] == "job-test-123"
     assert body["final"] == "Final text"
-

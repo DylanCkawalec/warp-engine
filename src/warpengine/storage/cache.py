@@ -39,4 +39,3 @@ def put_record(job_id: str, record: Dict[str, Any]) -> None:
 
 def get_record(job_id: str) -> Optional[Dict[str, Any]]:
     return read_cache().get(job_id)
-

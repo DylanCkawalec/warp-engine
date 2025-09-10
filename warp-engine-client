@@ -1,0 +1,210 @@
+#!/usr/bin/env python3
+"""
+Warp Engine Client CLI - Interact with the Engine Service
+This demonstrates how Warp Terminal would programmatically use the engine.
+"""
+
+import sys
+import json
+import time
+import argparse
+from pathlib import Path
+
+# Add project to path
+sys.path.insert(0, str(Path(__file__).parent / "src"))
+
+from warpengine.client.engine_client import WarpEngineClient, WarpAIInterface
+
+
+def print_status(client: WarpEngineClient):
+    """Print service status."""
+    if not client.is_running():
+        print("❌ Service not running. Start with: ./warp-engine-service start")
+        return
+    
+    print("✅ Service is running")
+    
+    try:
+        status = client.get_status()
+        if status:
+            print(f"  Jobs: {status.get('jobs_total', 0)} total")
+            print(f"  Running: {status.get('jobs_running', 0)}")
+            print(f"  Completed: {status.get('jobs_completed', 0)}")
+            print(f"  Failed: {status.get('jobs_failed', 0)}")
+            print(f"  WebSocket connections: {status.get('websocket_connections', 0)}")
+    except Exception as e:
+        print(f"  (Could not get detailed status: {e})")
+
+
+def create_agent_interactive(client: WarpEngineClient):
+    """Create an agent interactively."""
+    print("🤖 Agent Creation Wizard")
+    print("-" * 40)
+    
+    name = input("Agent name: ").strip()
+    
+    print("\nAgent type:")
+    print("  1. Research Agent")
+    print("  2. Code Generator")
+    print("  3. Data Analyst")
+    print("  4. Custom")
+    
+    choice = input("Select (1-4): ").strip()
+    
+    type_map = {
+        "1": "RESEARCH",
+        "2": "CODE_GENERATOR",
+        "3": "DATA_ANALYST",
+        "4": "CUSTOM"
+    }
+    agent_type = type_map.get(choice, "CUSTOM")
+    
+    description = input("Description: ").strip()
+    
+    print("\nCreating agent...")
+    result = client.create_agent(name, agent_type, description)
+    
+    if result.success:
+        print(f"✅ Agent created successfully!")
+        print(f"  Slug: {result.result['slug']}")
+        print(f"  Executable: {result.result['executable']}")
+    else:
+        print(f"❌ Failed: {result.error}")
+
+
+def natural_language_interface(client: WarpEngineClient):
+    """Natural language interface demo."""
+    ai = WarpAIInterface(client)
+    
+    print("🤖 Warp AI Interface (type 'exit' to quit)")
+    print("-" * 40)
+    print("Try: 'Create an agent that researches quantum computing'")
+    print("     'List all agents'")
+    print("     'Run the research agent on AI ethics'")
+    print()
+    
+    while True:
+        try:
+            request = input("You: ").strip()
+            
+            if request.lower() in ['exit', 'quit']:
+                break
+            
+            if not request:
+                continue
+            
+            response = ai.process_user_request(request)
+            print(f"\nAI: {response}\n")
+            
+        except KeyboardInterrupt:
+            break
+        except Exception as e:
+            print(f"Error: {e}")
+
+
+def execute_command(client: WarpEngineClient, command: str, params: str = None):
+    """Execute a raw command."""
+    params_dict = json.loads(params) if params else {}
+    
+    print(f"Executing: {command}")
+    result = client.execute_command(command, params_dict)
+    
+    if result.success:
+        print("✅ Success")
+        if result.result:
+            print(json.dumps(result.result, indent=2))
+    else:
+        print(f"❌ Failed: {result.error}")
+    
+    if result.logs:
+        print("\nLogs:")
+        for log in result.logs:
+            print(f"  {log}")
+
+
+def main():
+    """Main entry point."""
+    parser = argparse.ArgumentParser(
+        description="Warp Engine Client - Interact with the Engine Service"
+    )
+    
+    parser.add_argument(
+        "--url",
+        default="http://127.0.0.1:8788",
+        help="Service URL (default: http://127.0.0.1:8788)"
+    )
+    
+    subparsers = parser.add_subparsers(dest="command", help="Commands")
+    
+    # Status command
+    subparsers.add_parser("status", help="Check service status")
+    
+    # Create agent command
+    subparsers.add_parser("create", help="Create an agent interactively")
+    
+    # List agents command
+    subparsers.add_parser("list", help="List all agents")
+    
+    # Run agent command
+    run_parser = subparsers.add_parser("run", help="Run an agent")
+    run_parser.add_argument("agent", help="Agent name/slug")
+    run_parser.add_argument("input", help="Input text")
+    
+    # Natural language interface
+    subparsers.add_parser("ai", help="Natural language interface")
+    
+    # Raw command execution
+    exec_parser = subparsers.add_parser("exec", help="Execute raw command")
+    exec_parser.add_argument("cmd", help="Command to execute")
+    exec_parser.add_argument("--params", help="JSON parameters")
+    
+    args = parser.parse_args()
+    
+    # Create client
+    client = WarpEngineClient(args.url)
+    
+    # Check if service is running
+    if args.command != "status" and not client.is_running():
+        print("❌ Service not running. Start with: ./warp-engine-service start")
+        sys.exit(1)
+    
+    # Execute command
+    if args.command == "status":
+        print_status(client)
+    
+    elif args.command == "create":
+        create_agent_interactive(client)
+    
+    elif args.command == "list":
+        agents = client.list_agents()
+        if agents:
+            print("📋 Available Agents:")
+            for agent in agents:
+                print(f"  • {agent['name']} ({agent['slug']})")
+                if agent.get('description'):
+                    print(f"    {agent['description']}")
+        else:
+            print("No agents found")
+    
+    elif args.command == "run":
+        print(f"Running agent: {args.agent}")
+        result = client.run_agent(args.agent, args.input)
+        
+        if result.success:
+            print("✅ Success")
+            print(result.result.get('output', 'No output'))
+        else:
+            print(f"❌ Failed: {result.error}")
+    
+    elif args.command == "ai":
+        natural_language_interface(client)
+    
+    elif args.command == "exec":
+        execute_command(client, args.cmd, args.params)
+    
+    else:
+        parser.print_help()
+
+
+if __name__ == "__main__":
+    main()

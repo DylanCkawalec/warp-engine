@@ -21,7 +21,14 @@ def ensure_dirs() -> None:
     BIN_DIR.mkdir(parents=True, exist_ok=True)
 
 
-def create_agent_noninteractive(*, name: str, description: str, plan_prompt: str, exec_prompt: str, refine_prompt: str) -> str:
+def create_agent_noninteractive(
+    *,
+    name: str,
+    description: str,
+    plan_prompt: str,
+    exec_prompt: str,
+    refine_prompt: str,
+) -> str:
     slug = slugify(name)
     ensure_dirs()
 
@@ -51,18 +58,20 @@ def run(text: str) -> Tuple[str, str]:
     (pkg_dir / "runner.py").write_text(runner_py, encoding="utf-8")
 
     # Update registry entry
-    upsert_agent({
-        "name": name,
-        "slug": slug,
-        "description": description,
-        "entry": f"warpengine.agents.{slug}.runner:run",
-        "prompts": {
-            "plan": plan_prompt,
-            "execute": exec_prompt,
-            "refine": refine_prompt,
-        },
-        "type": "workflow",
-    })
+    upsert_agent(
+        {
+            "name": name,
+            "slug": slug,
+            "description": description,
+            "entry": f"warpengine.agents.{slug}.runner:run",
+            "prompts": {
+                "plan": plan_prompt,
+                "execute": exec_prompt,
+                "refine": refine_prompt,
+            },
+            "type": "workflow",
+        }
+    )
 
     return slug
 
@@ -70,10 +79,20 @@ def run(text: str) -> Tuple[str, str]:
 def create_agent_interactive() -> str:
     name = input("Agent name: ").strip()
     description = input("Description: ").strip()
-    print("\nProvide three prompts for the agent (Plan / Execute / Refine). Leave blank to use defaults.\n")
-    plan_prompt = input("Plan prompt: ").strip() or "You are Agent-Plan. Produce a concise plan."
-    exec_prompt = input("Execute prompt: ").strip() or "You are Agent-Exec. Execute the plan against the input."
-    refine_prompt = input("Refine prompt: ").strip() or "You are Agent-Refine. Improve clarity and correctness."
+    print(
+        "\nProvide three prompts for the agent (Plan / Execute / Refine). Leave blank to use defaults.\n"
+    )
+    plan_prompt = (
+        input("Plan prompt: ").strip() or "You are Agent-Plan. Produce a concise plan."
+    )
+    exec_prompt = (
+        input("Execute prompt: ").strip()
+        or "You are Agent-Exec. Execute the plan against the input."
+    )
+    refine_prompt = (
+        input("Refine prompt: ").strip()
+        or "You are Agent-Refine. Improve clarity and correctness."
+    )
     return create_agent_noninteractive(
         name=name,
         description=description,
@@ -103,4 +122,3 @@ print(f"\n[job_id={{job_id}}]", file=sys.stderr)
     except Exception:
         pass
     return shim
-

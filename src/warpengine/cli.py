@@ -6,27 +6,52 @@ from typing import Optional
 from .server.ui import run_server
 from .orchestrator.chain import run_latex_workflow_cli
 from .registry.registry import list_agents, get_agent, load_registry
-from .agent_builder.generator import create_agent_interactive, create_agent_noninteractive, generate_bin_shim
+from .agent_builder.generator import (
+    create_agent_interactive,
+    create_agent_noninteractive,
+    generate_bin_shim,
+)
+from .agent_builder.enhanced_generator import EnhancedAgentBuilder
 
 
 def main(argv: Optional[list[str]] = None) -> None:
-    parser = argparse.ArgumentParser(prog="warp-engine", description="Local A2A workflow orchestrator")
+    parser = argparse.ArgumentParser(
+        prog="warp-engine", description="Local A2A workflow orchestrator"
+    )
     sub = parser.add_subparsers(dest="cmd", required=True)
 
     p_serve = sub.add_parser("serve", help="Start the local UI server")
-    p_serve.add_argument("--host", default="127.0.0.1", help="Host to bind (default: 127.0.0.1)")
-    p_serve.add_argument("--port", type=int, default=8787, help="Port to bind (default: 8787)")
-    p_serve.add_argument("--open-browser", action="store_true", help="Open browser to the LaTeX page")
+    p_serve.add_argument(
+        "--host", default="127.0.0.1", help="Host to bind (default: 127.0.0.1)"
+    )
+    p_serve.add_argument(
+        "--port", type=int, default=8787, help="Port to bind (default: 8787)"
+    )
+    p_serve.add_argument(
+        "--open-browser", action="store_true", help="Open browser to the LaTeX page"
+    )
 
     p_run = sub.add_parser("run-latex", help="Run LaTeX workflow (UI or CLI mode)")
-    p_run.add_argument("--ui", action="store_true", help="Open the browser UI for LaTeX input")
-    p_run.add_argument("--host", default="127.0.0.1", help="UI host when using --ui (default: 127.0.0.1)")
-    p_run.add_argument("--port", type=int, default=8787, help="UI port when using --ui (default: 8787)")
+    p_run.add_argument(
+        "--ui", action="store_true", help="Open the browser UI for LaTeX input"
+    )
+    p_run.add_argument(
+        "--host",
+        default="127.0.0.1",
+        help="UI host when using --ui (default: 127.0.0.1)",
+    )
+    p_run.add_argument(
+        "--port", type=int, default=8787, help="UI port when using --ui (default: 8787)"
+    )
 
-    p_analyze = sub.add_parser("analyze", help="Analyze a completed job and print metrics")
+    p_analyze = sub.add_parser(
+        "analyze", help="Analyze a completed job and print metrics"
+    )
     p_analyze.add_argument("--job-id", help="Existing job id to analyze (required)")
 
-    p_reg = sub.add_parser("get-agent-registry", help="Print the agent registry as JSON")
+    p_reg = sub.add_parser(
+        "get-agent-registry", help="Print the agent registry as JSON"
+    )
 
     p_new = sub.add_parser("new-agent", help="Create a new agent via prompts or flags")
     p_new.add_argument("--name", help="Agent name")
@@ -34,11 +59,18 @@ def main(argv: Optional[list[str]] = None) -> None:
     p_new.add_argument("--plan-prompt", help="Plan prompt text")
     p_new.add_argument("--exec-prompt", help="Execute prompt text")
     p_new.add_argument("--refine-prompt", help="Refine prompt text")
+    p_new.add_argument(
+        "--enhanced",
+        action="store_true",
+        help="Use enhanced agent builder with templates",
+    )
 
     p_agent = sub.add_parser("agent", help="Work with agents")
     sp = p_agent.add_subparsers(dest="agent_cmd", required=True)
     p_list = sp.add_parser("list", help="List registered agents")
-    p_run_agent = sp.add_parser("run", help="Run an agent workflow with pasted input from stdin")
+    p_run_agent = sp.add_parser(
+        "run", help="Run an agent workflow with pasted input from stdin"
+    )
     p_run_agent.add_argument("--name", required=True, help="Agent name to run")
 
     args = parser.parse_args(argv)
@@ -54,7 +86,9 @@ def main(argv: Optional[list[str]] = None) -> None:
             # Start (or assume) server and open page. For simplicity, just open the page.
             # If the server is not yet running, the user can start it via `warp-engine serve --open-browser`.
             webbrowser.open_new_tab(f"http://{args.host}:{args.port}/latex")
-            print("Opened LaTeX UI in your browser. If you don't see it, run: `warp-engine serve --open-browser`.")
+            print(
+                "Opened LaTeX UI in your browser. If you don't see it, run: `warp-engine serve --open-browser`."
+            )
             return
         # CLI mode: read stdin for LaTeX until EOF (Ctrl-D)
         print("Paste LaTeX, then press Ctrl-D (EOF) to submit:\n", file=sys.stderr)
@@ -73,6 +107,7 @@ def main(argv: Optional[list[str]] = None) -> None:
             sys.exit(2)
         from .storage.cache import get_record
         from .metrics.analysis import extract_printable_metrics
+
         rec = get_record(args.job_id)
         if not rec:
             print("Job not found", file=sys.stderr)
@@ -84,11 +119,23 @@ def main(argv: Optional[list[str]] = None) -> None:
     if args.cmd == "get-agent-registry":
         reg = load_registry()
         import json
+
         print(json.dumps(reg, indent=2))
         return
 
     if args.cmd == "new-agent":
-        if args.name and args.description and args.plan_prompt and args.exec_prompt and args.refine_prompt:
+        if (
+            args.enhanced or not args.name
+        ):  # Use enhanced builder by default for interactive mode
+            builder = EnhancedAgentBuilder()
+            slug = builder.interactive_agent_creation()
+        elif (
+            args.name
+            and args.description
+            and args.plan_prompt
+            and args.exec_prompt
+            and args.refine_prompt
+        ):
             slug = create_agent_noninteractive(
                 name=args.name,
                 description=args.description,
@@ -96,11 +143,18 @@ def main(argv: Optional[list[str]] = None) -> None:
                 exec_prompt=args.exec_prompt,
                 refine_prompt=args.refine_prompt,
             )
+            # Create a runnable shim in bin/
+            shim_path = generate_bin_shim(slug)
+            print(
+                f"Created agent '{slug}'. Run it with: {shim_path} or via 'warp-engine agent run --name {slug}'"
+            )
         else:
             slug = create_agent_interactive()
-        # Create a runnable shim in bin/
-        shim_path = generate_bin_shim(slug)
-        print(f"Created agent '{slug}'. Run it with: {shim_path} or via 'warp-engine agent run --name {slug}'")
+            # Create a runnable shim in bin/
+            shim_path = generate_bin_shim(slug)
+            print(
+                f"Created agent '{slug}'. Run it with: {shim_path} or via 'warp-engine agent run --name {slug}'"
+            )
         return
 
     if args.cmd == "agent":
@@ -116,6 +170,7 @@ def main(argv: Optional[list[str]] = None) -> None:
                 sys.exit(4)
             # Import the runner dynamically
             import importlib
+
             module_path, func_name = agent["entry"].split(":")
             mod = importlib.import_module(module_path)
             run_fn = getattr(mod, func_name)
@@ -129,4 +184,3 @@ def main(argv: Optional[list[str]] = None) -> None:
 
 if __name__ == "__main__":
     main()
-

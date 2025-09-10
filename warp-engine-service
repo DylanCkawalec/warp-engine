@@ -1,0 +1,199 @@
+#!/usr/bin/env bash
+# Warp Engine Service Launcher - Runs as a persistent server
+
+# Colors for output
+RED='\033[0;31m'
+GREEN='\033[0;32m'
+YELLOW='\033[1;33m'
+BLUE='\033[0;34m'
+CYAN='\033[0;36m'
+NC='\033[0m' # No Color
+
+# Configuration
+SERVICE_HOST="127.0.0.1"
+SERVICE_PORT="8788"
+PID_FILE="/tmp/warp-engine-service.pid"
+LOG_FILE="data/logs/service.log"
+
+# Get script directory
+SCRIPT_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
+cd "$SCRIPT_DIR"
+
+# Ensure virtual environment
+if [ ! -d ".venv" ]; then
+    echo -e "${YELLOW}Creating virtual environment...${NC}"
+    python3 -m venv .venv
+fi
+
+source .venv/bin/activate
+
+# Check dependencies
+if ! python -c "import warpengine" 2>/dev/null; then
+    echo -e "${YELLOW}Installing dependencies...${NC}"
+    pip install -e . --quiet
+    pip install openai websockets python-dotenv fastapi uvicorn --quiet
+fi
+
+# Check .env file
+if [ ! -f ".env" ]; then
+    echo -e "${RED}❌ Configuration not found${NC}"
+    echo -e "${YELLOW}Please run: ./install.sh${NC}"
+    exit 1
+fi
+
+# Load environment
+source .env
+
+# Function to start the service
+start_service() {
+    if [ -f "$PID_FILE" ]; then
+        PID=$(cat "$PID_FILE")
+        if ps -p "$PID" > /dev/null 2>&1; then
+            echo -e "${YELLOW}⚠️  Service already running (PID: $PID)${NC}"
+            return 1
+        fi
+    fi
+    
+    echo -e "${GREEN}🚀 Starting Warp Engine Service...${NC}"
+    echo -e "${CYAN}  Host: $SERVICE_HOST${NC}"
+    echo -e "${CYAN}  Port: $SERVICE_PORT${NC}"
+    echo -e "${CYAN}  API: http://$SERVICE_HOST:$SERVICE_PORT${NC}"
+    echo -e "${CYAN}  WebSocket: ws://$SERVICE_HOST:$SERVICE_PORT/ws${NC}"
+    
+    # Start service in background
+    nohup python -c "
+from warpengine.server.engine_service import run_service
+run_service('$SERVICE_HOST', $SERVICE_PORT)
+" > "$LOG_FILE" 2>&1 &
+    
+    PID=$!
+    echo $PID > "$PID_FILE"
+    
+    sleep 2
+    
+    # Check if service started
+    if ps -p "$PID" > /dev/null 2>&1; then
+        echo -e "${GREEN}✅ Service started successfully (PID: $PID)${NC}"
+        echo -e "${CYAN}  Logs: tail -f $LOG_FILE${NC}"
+        return 0
+    else
+        echo -e "${RED}❌ Failed to start service${NC}"
+        rm -f "$PID_FILE"
+        return 1
+    fi
+}
+
+# Function to stop the service
+stop_service() {
+    if [ ! -f "$PID_FILE" ]; then
+        echo -e "${YELLOW}Service not running${NC}"
+        return 1
+    fi
+    
+    PID=$(cat "$PID_FILE")
+    
+    if ps -p "$PID" > /dev/null 2>&1; then
+        echo -e "${YELLOW}Stopping service (PID: $PID)...${NC}"
+        kill "$PID"
+        sleep 2
+        
+        # Force kill if still running
+        if ps -p "$PID" > /dev/null 2>&1; then
+            kill -9 "$PID"
+        fi
+        
+        rm -f "$PID_FILE"
+        echo -e "${GREEN}✅ Service stopped${NC}"
+    else
+        echo -e "${YELLOW}Service not running (stale PID file)${NC}"
+        rm -f "$PID_FILE"
+    fi
+}
+
+# Function to check service status
+check_status() {
+    if [ -f "$PID_FILE" ]; then
+        PID=$(cat "$PID_FILE")
+        if ps -p "$PID" > /dev/null 2>&1; then
+            echo -e "${GREEN}✅ Service is running (PID: $PID)${NC}"
+            
+            # Check if responding
+            if curl -s "http://$SERVICE_HOST:$SERVICE_PORT/" > /dev/null 2>&1; then
+                echo -e "${GREEN}✅ Service is responding${NC}"
+                
+                # Get detailed status
+                STATUS=$(curl -s "http://$SERVICE_HOST:$SERVICE_PORT/api/status")
+                echo -e "${CYAN}Status:${NC}"
+                echo "$STATUS" | python -m json.tool
+            else
+                echo -e "${YELLOW}⚠️  Service not responding (may be starting)${NC}"
+            fi
+        else
+            echo -e "${RED}❌ Service not running (stale PID file)${NC}"
+            rm -f "$PID_FILE"
+        fi
+    else
+        echo -e "${YELLOW}Service not running${NC}"
+    fi
+}
+
+# Function to show logs
+show_logs() {
+    if [ -f "$LOG_FILE" ]; then
+        echo -e "${CYAN}Service logs:${NC}"
+        tail -n 50 "$LOG_FILE"
+    else
+        echo -e "${YELLOW}No log file found${NC}"
+    fi
+}
+
+# Main menu
+case "${1:-}" in
+    start)
+        start_service
+        ;;
+    stop)
+        stop_service
+        ;;
+    restart)
+        stop_service
+        sleep 1
+        start_service
+        ;;
+    status)
+        check_status
+        ;;
+    logs)
+        show_logs
+        ;;
+    follow)
+        if [ -f "$LOG_FILE" ]; then
+            tail -f "$LOG_FILE"
+        else
+            echo -e "${YELLOW}No log file found${NC}"
+        fi
+        ;;
+    *)
+        echo -e "${BLUE}╔══════════════════════════════════════════════════════════╗${NC}"
+        echo -e "${BLUE}║     WARP ENGINE SERVICE - Server Mode                   ║${NC}"
+        echo -e "${BLUE}╚══════════════════════════════════════════════════════════╝${NC}"
+        echo ""
+        echo "Usage: $0 {start|stop|restart|status|logs|follow}"
+        echo ""
+        echo "Commands:"
+        echo "  start    - Start the service"
+        echo "  stop     - Stop the service"
+        echo "  restart  - Restart the service"
+        echo "  status   - Check service status"
+        echo "  logs     - Show recent logs"
+        echo "  follow   - Follow logs in real-time"
+        echo ""
+        echo "API Endpoints:"
+        echo "  http://$SERVICE_HOST:$SERVICE_PORT/           - Service info"
+        echo "  http://$SERVICE_HOST:$SERVICE_PORT/api/command - Execute commands"
+        echo "  http://$SERVICE_HOST:$SERVICE_PORT/api/agents  - List agents"
+        echo "  http://$SERVICE_HOST:$SERVICE_PORT/api/status  - Service status"
+        echo "  ws://$SERVICE_HOST:$SERVICE_PORT/ws         - WebSocket connection"
+        exit 1
+        ;;
+esac

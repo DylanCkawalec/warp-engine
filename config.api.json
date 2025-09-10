@@ -1,16 +1,141 @@
 {
-  "api_version": "1.0",
-  "description": "Universal agent registry and generator config for warp-engine",
+  "api_version": "2.0",
+  "description": "Universal Agent Protocol - Warp Engine Configuration",
+  "protocol": {
+    "name": "warp-engine-protocol",
+    "version": "2.0.0",
+    "compatibility": ["warp-terminal", "mcp", "openai"]
+  },
   "paths": {
     "registry": "data/registry.json",
     "agents_root": "src/warpengine/agents",
-    "bin_dir": "bin"
+    "toolkits_root": "src/warpengine/toolkits",
+    "bin_dir": "bin",
+    "knowledge_base": "data/knowledge",
+    "warp_drive_cache": "data/warp_drive",
+    "test_results": "data/test_results"
+  },
+  "warp_integration": {
+    "enabled": true,
+    "mcp_server": {
+      "port": 8788,
+      "host": "127.0.0.1",
+      "protocol": "websocket"
+    },
+    "agent_profiles": {
+      "default_permissions": ["read", "write", "execute"],
+      "sandbox_mode": true
+    },
+    "features": {
+      "voice_commands": true,
+      "task_lists": true,
+      "code_review": true,
+      "drive_sync": true
+    }
+  },
+  "agent_builder": {
+    "templates": {
+      "research": {
+        "name": "Research Agent",
+        "description": "Deep research with multi-page expert output",
+        "prompts": {
+          "plan": "You are a research planner. Create a comprehensive research outline with sources, methodologies, and expected outcomes.",
+          "execute": "You are a research executor. Gather information, analyze data, and produce a detailed multi-page report with citations.",
+          "refine": "You are a research editor. Polish the report for clarity, accuracy, and professional presentation."
+        }
+      },
+      "code_generator": {
+        "name": "Code Generation Agent",
+        "description": "Generate production-ready code with tests",
+        "prompts": {
+          "plan": "You are a software architect. Design the solution architecture, identify components, and plan the implementation.",
+          "execute": "You are a senior developer. Implement the solution with clean code, proper error handling, and documentation.",
+          "refine": "You are a code reviewer. Optimize performance, ensure best practices, and add comprehensive tests."
+        }
+      },
+      "data_analyst": {
+        "name": "Data Analysis Agent",
+        "description": "Analyze data and produce insights",
+        "prompts": {
+          "plan": "You are a data scientist. Plan the analysis approach, identify metrics, and design visualizations.",
+          "execute": "You are a data analyst. Process the data, perform statistical analysis, and generate insights.",
+          "refine": "You are a data storyteller. Create compelling narratives and actionable recommendations from the analysis."
+        }
+      }
+    },
+    "lifecycle": {
+      "phases": ["create", "build", "test", "deploy", "monitor", "terminate"],
+      "auto_test": true,
+      "auto_deploy": true,
+      "rollback_on_failure": true
+    },
+    "compilation": {
+      "target": "binary",
+      "optimization": "release",
+      "strip_debug": true
+    }
+  },
+  "toolkits": {
+    "linux_research": {
+      "name": "Linux Research Toolkit",
+      "description": "Expert Linux system analysis and documentation",
+      "extends": "research",
+      "specializations": {
+        "kernel_analysis": true,
+        "performance_tuning": true,
+        "security_audit": true
+      }
+    },
+    "api_builder": {
+      "name": "API Builder Toolkit",
+      "description": "REST/GraphQL API generation",
+      "extends": "code_generator",
+      "specializations": {
+        "openapi_spec": true,
+        "authentication": true,
+        "rate_limiting": true
+      }
+    }
   },
   "defaults": {
     "prompts": {
-      "plan": "You are Agent-Plan. Produce a concise plan.",
-      "execute": "You are Agent-Exec. Execute the plan against the input.",
-      "refine": "You are Agent-Refine. Improve clarity and correctness."
+      "plan": "You are Agent-Plan. Produce a comprehensive, actionable plan.",
+      "execute": "You are Agent-Exec. Execute the plan with precision and thoroughness.",
+      "refine": "You are Agent-Refine. Polish and perfect the output for production use."
+    },
+    "models": {
+      "plan": "gpt-4-turbo-preview",
+      "execute": "gpt-4-turbo-preview",
+      "refine": "gpt-4-turbo-preview"
+    },
+    "timeouts": {
+      "agent_response": 120,
+      "build_process": 300,
+      "test_suite": 180
+    }
+  },
+  "api": {
+    "openai": {
+      "base_url": "https://api.openai.com/v1",
+      "model_preferences": ["gpt-4-turbo-preview", "gpt-4", "gpt-3.5-turbo"],
+      "max_tokens": 4096,
+      "temperature": 0.7
+    },
+    "warp": {
+      "cli_path": "/usr/local/bin/warp",
+      "use_local_terminal": true
+    }
+  },
+  "monitoring": {
+    "metrics": {
+      "track_performance": true,
+      "track_costs": true,
+      "track_usage": true
+    },
+    "logging": {
+      "level": "info",
+      "file": "data/logs/warp-engine.log",
+      "rotate": true
     }
   }
 }

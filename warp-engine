@@ -1,0 +1,192 @@
+#!/usr/bin/env bash
+# Warp Engine Launcher Script
+
+# Colors for output
+RED='\033[0;31m'
+GREEN='\033[0;32m'
+YELLOW='\033[1;33m'
+BLUE='\033[0;34m'
+NC='\033[0m' # No Color
+
+# Get the directory where this script is located
+SCRIPT_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
+cd "$SCRIPT_DIR"
+
+# Check if virtual environment exists
+if [ ! -d ".venv" ]; then
+    echo -e "${YELLOW}🔧 Creating virtual environment...${NC}"
+    python3 -m venv .venv
+fi
+
+# Activate virtual environment
+source .venv/bin/activate
+
+# Check if dependencies are installed
+if ! python -c "import warpengine" 2>/dev/null; then
+    echo -e "${YELLOW}📦 Installing dependencies...${NC}"
+    pip install -e . >/dev/null 2>&1
+    pip install openai requests python-dotenv fastapi uvicorn >/dev/null 2>&1
+fi
+
+# Check for .env file
+if [ ! -f ".env" ]; then
+    echo -e "${RED}❌ Configuration not found${NC}"
+    echo -e "${YELLOW}Please run the installation script first:${NC}"
+    echo -e "${GREEN}  ./install.sh${NC}"
+    echo ""
+    exit 1
+fi
+
+# Load environment variables safely
+set -a
+source .env 2>/dev/null || {
+    echo -e "${RED}❌ Error loading .env file${NC}"
+    echo -e "${YELLOW}Please run: ./install.sh${NC}"
+    exit 1
+}
+set +a
+
+# Check if OPENAI_API_KEY is set
+if [ -z "$OPENAI_API_KEY" ] || [[ "$OPENAI_API_KEY" == "your-api-key-here" ]] || [[ "$OPENAI_API_KEY" == "YOUR_API_KEY_HERE" ]]; then
+    echo -e "${RED}❌ OPENAI_API_KEY not configured${NC}"
+    echo -e "${YELLOW}Please run the installation script:${NC}"
+    echo -e "${GREEN}  ./install.sh${NC}"
+    echo ""
+    echo -e "${CYAN}The installer will ask for your API key and set everything up.${NC}"
+    exit 1
+fi
+
+# Validate API key format
+if [[ ! "$OPENAI_API_KEY" =~ ^sk-[a-zA-Z0-9_-]{20,}$ ]]; then
+    echo -e "${YELLOW}⚠️  Warning: API key format may be incorrect${NC}"
+    echo -e "${CYAN}Run ./install.sh to reconfigure if needed${NC}"
+fi
+
+#!/usr/bin/env bash
+# Warp Engine - Legacy Interactive Menu (deprecated)
+# Use warp-engine-service and warp-engine-client for new functionality
+
+echo "⚠️  This script is deprecated."
+echo ""
+echo "For the server:"
+echo "  ./warp-engine-service start    # Start service"
+echo "  ./warp-engine-service status   # Check status"
+echo ""
+echo "For client interaction:"
+echo "  ./warp-engine-client ai        # Natural language interface"
+echo "  ./warp-engine-client list      # List agents"
+echo "  ./warp-engine-client create    # Create agent"
+echo ""
+echo "For web interface:"
+echo "  open http://127.0.0.1:8788     # Open web UI"
+echo ""
+echo "Press Enter to continue with legacy menu..."
+read
+
+# Display banner
+clear
+echo -e "${BLUE}"
+echo "╔══════════════════════════════════════════════════════════╗"
+echo "║                                                          ║"
+echo "║     ██╗    ██╗ █████╗ ██████╗ ██████╗                  ║"
+echo "║     ██║    ██║██╔══██╗██╔══██╗██╔══██╗                 ║"
+echo "║     ██║ █╗ ██║███████║██████╔╝██████╔╝                 ║"
+echo "║     ██║███╗██║██╔══██║██╔══██╗██╔═══╝                  ║"
+echo "║     ╚███╔███╔╝██║  ██║██║  ██║██║                      ║"
+echo "║     ╚══╝╚══╝ ╚═╝  ╚═╝╚═╝  ╚═╝╚═╝                      ║"
+echo "║                                                          ║"
+echo "║     ███████╗███╗   ██╗ ██████╗ ██╗███╗   ██╗███████╗   ║"
+echo "║     ██╔════╝████╗  ██║██╔════╝ ██║████╗  ██║██╔════╝   ║"
+echo "║     █████╗  ██╔██╗ ██║██║  ███╗██║██╔██╗ ██║█████╗     ║"
+echo "║     ██╔══╝  ██║╚██╗██║██║   ██║██║██║╚██╗██║██╔══╝     ║"
+echo "║     ███████╗██║ ╚████║╚██████╔╝██║██║ ╚████║███████╗   ║"
+echo "║     ╚══════╝╚═╝  ╚═══╝ ╚═════╝ ╚═╝╚═╝  ╚═══╝╚══════╝   ║"
+echo "║                                                          ║"
+echo "║          Universal Agent Protocol v2.0                  ║"
+echo "╚══════════════════════════════════════════════════════════╝"
+echo -e "${NC}"
+
+# Show available commands
+echo -e "${GREEN}Available Commands:${NC}"
+echo "  1) 🚀 Start Server         - Launch the Warp Engine server"
+echo "  2) 🤖 New Agent           - Create a new agent interactively"
+echo "  3) 📋 List Agents         - Show all registered agents"
+echo "  4) 🏃 Run Agent           - Execute a specific agent"
+echo "  5) 📊 Agent Registry      - View the complete registry"
+echo "  6) 🧪 Run Tests           - Execute test suite"
+echo "  7) 📝 LaTeX Workflow      - Run LaTeX processing"
+echo "  8) 🌐 Open Browser UI     - Launch web interface"
+echo "  9) 💻 Command Line        - Drop to warp-engine CLI"
+echo "  0) ❌ Exit"
+echo ""
+
+# Main menu loop
+while true; do
+    read -p "Select option (0-9): " choice
+
+    case $choice in
+        1)
+            echo -e "${GREEN}🚀 Starting Warp Engine server...${NC}"
+            ./warp-engine-service start
+            ;;
+        2)
+            echo -e "${GREEN}🤖 Creating new agent...${NC}"
+            ./warp-engine-client create
+            ;;
+        3)
+            echo -e "${GREEN}📋 Registered agents:${NC}"
+            ./warp-engine-client list
+            ;;
+        4)
+            read -p "Enter agent name: " agent_name
+            echo -e "${GREEN}🏃 Running agent: $agent_name${NC}"
+            ./warp-engine-client run "$agent_name" "Test input"
+            ;;
+        5)
+            echo -e "${GREEN}📊 Agent Registry:${NC}"
+            curl -s http://127.0.0.1:8788/api/agents | python -m json.tool
+            ;;
+        6)
+            echo -e "${GREEN}🧪 Running tests...${NC}"
+            python -m pytest tests/ -v
+            ;;
+        7)
+            echo -e "${GREEN}📝 LaTeX Workflow${NC}"
+            echo "Legacy LaTeX workflow - use agent interface instead"
+            ;;
+        8)
+            echo -e "${GREEN}🌐 Opening browser UI...${NC}"
+            open "http://127.0.0.1:8788"
+            ;;
+        9)
+            echo -e "${GREEN}💻 Entering CLI mode...${NC}"
+            echo "Use ./warp-engine-client for CLI commands"
+            ;;
+        0)
+            echo -e "${GREEN}👋 Goodbye!${NC}"
+            exit 0
+            ;;
+        *)
+            echo -e "${RED}Invalid option. Please try again.${NC}"
+            ;;
+    esac
+
+    echo ""
+    echo -e "${YELLOW}Press Enter to continue...${NC}"
+    read
+    clear
+
+    # Redisplay menu
+    echo -e "${GREEN}Available Commands:${NC}"
+    echo "  1) 🚀 Start Server         - Launch the Warp Engine server"
+    echo "  2) 🤖 New Agent           - Create a new agent interactively"
+    echo "  3) 📋 List Agents         - Show all registered agents"
+    echo "  4) 🏃 Run Agent           - Execute a specific agent"
+    echo "  5) 📊 Agent Registry      - View the complete registry"
+    echo "  6) 🧪 Run Tests           - Execute test suite"
+    echo "  7) 📝 LaTeX Workflow      - Run LaTeX processing"
+    echo "  8) 🌐 Open Browser UI     - Launch web interface"
+    echo "  9) 💻 Command Line        - Drop to warp-engine CLI"
+    echo "  0) ❌ Exit"
+    echo ""
+done

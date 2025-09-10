@@ -42,9 +42,17 @@ def analyze_text_pair(input_text: str, output_text: str) -> Dict[str, Any]:
         "words": (out["counts"]["words"] - inp["counts"]["words"]),
         "sentences": (out["counts"]["sentences"] - inp["counts"]["sentences"]),
         "unique_words": (out["counts"]["unique_words"] - inp["counts"]["unique_words"]),
-        "flesch_reading_ease": (out["readability"]["flesch_reading_ease"] - inp["readability"]["flesch_reading_ease"]),
-        "flesch_kincaid_grade": (out["readability"]["flesch_kincaid_grade"] - inp["readability"]["flesch_kincaid_grade"]),
-        "type_token_ratio": (out["lexical"]["type_token_ratio"] - inp["lexical"]["type_token_ratio"]),
+        "flesch_reading_ease": (
+            out["readability"]["flesch_reading_ease"]
+            - inp["readability"]["flesch_reading_ease"]
+        ),
+        "flesch_kincaid_grade": (
+            out["readability"]["flesch_kincaid_grade"]
+            - inp["readability"]["flesch_kincaid_grade"]
+        ),
+        "type_token_ratio": (
+            out["lexical"]["type_token_ratio"] - inp["lexical"]["type_token_ratio"]
+        ),
     }
     return {"input": inp, "output": out, "delta": delta}
 
@@ -68,4 +76,3 @@ def extract_printable_metrics(metrics: Dict[str, Any]) -> str:
         "delta": delta,
     }
     return json.dumps(report, indent=2)
-

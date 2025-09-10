@@ -1,0 +1,32 @@
+version: '3.8'
+
+services:
+  warp-engine:
+    build: .
+    ports:
+      - "8788:8788"
+    volumes:
+      - ./data:/app/data
+      - ./bin:/app/bin
+    environment:
+      - WARP_ENGINE_HOST=0.0.0.0
+      - OPENAI_API_KEY=${OPENAI_API_KEY}
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8788/api/status"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+    restart: unless-stopped
+
+  # Optional: Add a reverse proxy
+  nginx:
+    image: nginx:alpine
+    ports:
+      - "80:80"
+    volumes:
+      - ./nginx.conf:/etc/nginx/nginx.conf:ro
+    depends_on:
+      - warp-engine
+    restart: unless-stopped
+    profiles:
+      - proxy

@@ -87,7 +87,6 @@ def top_ngrams(text: str, n: int = 2, top_k: int = 10) -> List[Tuple[str, int]]:
     words = tokenize_words(text)
     if len(words) < n:
         return []
-    ngrams = [" ".join(words[i:i+n]) for i in range(len(words)-n+1)]
+    ngrams = [" ".join(words[i : i + n]) for i in range(len(words) - n + 1)]
     counts = Counter(ngrams)
     return counts.most_common(top_k)
-

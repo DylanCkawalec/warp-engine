@@ -1,7 +1,12 @@
 from warpengine.metrics.text_stats import (
-    tokenize_words, tokenize_sentences, count_syllables,
-    basic_counts, type_token_ratio, top_ngrams,
-    flesch_reading_ease, flesch_kincaid_grade,
+    tokenize_words,
+    tokenize_sentences,
+    count_syllables,
+    basic_counts,
+    type_token_ratio,
+    top_ngrams,
+    flesch_reading_ease,
+    flesch_kincaid_grade,
 )
 
 
@@ -31,4 +36,3 @@ def test_lexical_and_ngrams():
     assert 0 < ttr <= 1
     bigrams = top_ngrams(text, n=2, top_k=5)
     assert isinstance(bigrams, list)
-
