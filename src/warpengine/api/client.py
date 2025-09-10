@@ -47,6 +47,8 @@ class A2AClient:
         if OPENAI_AVAILABLE and (env("OPENAI_API_KEY") or self.api_key):
             try:
                 self.openai_client = OpenAIAgentClient(api_key=self.api_key)
+                # Set conservative rate limit
+                self.openai_client.rate_limiter.calls_per_minute = 30
             except Exception:
                 pass
 

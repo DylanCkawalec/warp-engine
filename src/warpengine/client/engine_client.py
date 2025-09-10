@@ -250,6 +250,12 @@ class WarpAIInterface:
 
         if "create" in request_lower and "agent" in request_lower:
             return self._handle_agent_creation(request)
+        elif "delete" in request_lower and "agent" in request_lower:
+            agent_name = self._extract_agent_name(request)
+            return self._handle_delete_agent(agent_name)
+        elif "update" in request_lower and "agent" in request_lower:
+            agent_name = self._extract_agent_name(request)
+            return self._handle_update_agent(agent_name, request)
         elif "list" in request_lower and "agent" in request_lower:
             return self._handle_list_agents()
         elif "run" in request_lower:
@@ -273,8 +279,11 @@ class WarpAIInterface:
         elif "code" in request.lower() or "build" in request.lower():
             agent_type = "CODE_GENERATOR"
             name = self._extract_topic(request) + " Code Generator"
+        elif "data" in request.lower() or "analytics" in request.lower() or "trading" in request.lower():
+            agent_type = "DATA_ANALYST"
+            name = self._extract_topic(request) + " Data Analyst"
         else:
-            agent_type = "CUSTOM"
+            agent_type = "RESEARCH"  # Default to RESEARCH instead of CUSTOM
             name = self._extract_topic(request) + " Agent"
 
         description = f"Agent created from request: {request}"
@@ -375,3 +384,95 @@ Service status: """ + (
                 return " ".join(words[i + 1 : i + 3]).title()
 
         return "Custom"
+
+    def _extract_agent_name(self, request: str) -> str:
+        """Extract agent name from request.
+
+        Args:
+            request: User request
+
+        Returns:
+            Agent name
+        """
+        # Look for quoted names or specific patterns
+        import re
+
+        # Check for quoted names
+        quoted_match = re.search(r'["\']([^"\']+)["\']', request)
+        if quoted_match:
+            return quoted_match.group(1)
+
+        # Look for common patterns
+        words = request.lower().split()
+
+        # Skip command words
+        skip_words = ["delete", "update", "remove", "agent", "the", "called", "named"]
+        filtered_words = [w for w in words if w not in skip_words]
+
+        # Try to find agent names from existing agents
+        agents = self.client.list_agents()
+        agent_names = [a["slug"] for a in agents]
+
+        for word in filtered_words:
+            if word in agent_names:
+                return word
+
+        # If no match, return first meaningful word
+        return filtered_words[0] if filtered_words else "unknown"
+
+    def _handle_delete_agent(self, agent_name: str) -> str:
+        """Handle agent deletion request.
+
+        Args:
+            agent_name: Name of agent to delete
+
+        Returns:
+            Response message
+        """
+        try:
+            result = self.client.execute_command("delete_agent", {"agent": agent_name})
+
+            if result.success:
+                return f"✅ Agent '{agent_name}' deleted successfully!"
+            else:
+                return f"❌ Failed to delete agent '{agent_name}': {result.error}"
+
+        except Exception as e:
+            return f"❌ Error deleting agent: {str(e)}"
+
+    def _handle_update_agent(self, agent_name: str, request: str) -> str:
+        """Handle agent update request.
+
+        Args:
+            agent_name: Name of agent to update
+            request: Full request for context
+
+        Returns:
+            Response message
+        """
+        try:
+            # Extract update requirements from request
+            updates = {}
+
+            if "better" in request.lower() or "improve" in request.lower():
+                updates["description"] = "Improved and enhanced agent capabilities"
+                updates["type"] = "ENHANCED"
+
+            if "faster" in request.lower():
+                updates["optimization"] = "performance_optimized"
+
+            if "smarter" in request.lower() or "intelligent" in request.lower():
+                updates["intelligence"] = "enhanced_reasoning"
+
+            result = self.client.execute_command("update_agent", {
+                "agent": agent_name,
+                "updates": updates
+            })
+
+            if result.success:
+                return f"✅ Agent '{agent_name}' updated successfully!"
+            else:
+                return f"❌ Failed to update agent '{agent_name}': {result.error}"
+
+        except Exception as e:
+            return f"❌ Error updating agent: {str(e)}"

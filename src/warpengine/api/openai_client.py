@@ -5,13 +5,49 @@ from __future__ import annotations
 import json
 import os
 import time
+import asyncio
 from typing import Any, Dict, List, Optional
 from dataclasses import dataclass
+from datetime import datetime, timedelta
 
 import openai
 from openai import OpenAI
 
 from ..config import env
+
+
+class RateLimiter:
+    """Simple rate limiter for API calls."""
+
+    def __init__(self, calls_per_minute: int = 50):
+        """Initialize rate limiter.
+
+        Args:
+            calls_per_minute: Maximum calls per minute
+        """
+        self.calls_per_minute = calls_per_minute
+        self.call_times: List[datetime] = []
+
+    def can_make_call(self) -> bool:
+        """Check if a call can be made without exceeding rate limit."""
+        now = datetime.now()
+
+        # Remove calls older than 1 minute
+        cutoff = now - timedelta(minutes=1)
+        self.call_times = [t for t in self.call_times if t > cutoff]
+
+        return len(self.call_times) < self.calls_per_minute
+
+    def record_call(self) -> None:
+        """Record a call for rate limiting."""
+        self.call_times.append(datetime.now())
+
+    async def wait_if_needed(self) -> None:
+        """Wait if necessary to respect rate limits."""
+        while not self.can_make_call():
+            await asyncio.sleep(1)
+
+        self.record_call()
 
 
 @dataclass
@@ -60,6 +96,18 @@ class OpenAIAgentClient:
         # Parameters
         self.max_tokens = self.api_config.get("max_tokens", 4096)
         self.temperature = self.api_config.get("temperature", 0.7)
+
+        # Rate limiter (50 calls per minute by default)
+        self.rate_limiter = RateLimiter(calls_per_minute=50)
+
+        # Usage tracking
+        self.usage_stats = {
+            "total_calls": 0,
+            "total_tokens": 0,
+            "total_cost": 0.0,
+            "calls_this_minute": 0,
+            "last_minute_reset": time.time()
+        }
 
     def _select_model(self, mode: str) -> str:
         """Select the appropriate model based on mode.
@@ -145,6 +193,17 @@ class OpenAIAgentClient:
         context = context or {}
         start_time = time.time()
 
+        # Apply rate limiting (synchronous version)
+        if not self.rate_limiter.can_make_call():
+            return {
+                "id": job_id,
+                "output": "[Rate Limited: Too many API calls per minute]",
+                "agent": agent,
+                "context": context,
+                "rate_limited": True,
+            }
+        self.rate_limiter.record_call()
+
         try:
             # Select model based on mode
             model = self._select_model(mode)
@@ -173,6 +232,9 @@ class OpenAIAgentClient:
                 else None
             )
 
+            # Update usage statistics
+            self._update_usage_stats(usage)
+
             duration_ms = int((time.time() - start_time) * 1000)
 
             return {
@@ -194,6 +256,35 @@ class OpenAIAgentClient:
                 "context": context,
                 "error": str(e),
             }
+
+    def _update_usage_stats(self, usage: Optional[Dict[str, int]]) -> None:
+        """Update usage statistics."""
+        if usage:
+            self.usage_stats["total_calls"] += 1
+            self.usage_stats["total_tokens"] += usage.get("total_tokens", 0)
+
+            # Rough cost estimation ($0.002 per 1K tokens for GPT-4)
+            tokens = usage.get("total_tokens", 0)
+            cost = (tokens / 1000) * 0.002
+            self.usage_stats["total_cost"] += cost
+
+        # Update per-minute stats
+        now = time.time()
+        if now - self.usage_stats["last_minute_reset"] >= 60:
+            self.usage_stats["calls_this_minute"] = 0
+            self.usage_stats["last_minute_reset"] = now
+
+        self.usage_stats["calls_this_minute"] += 1
+
+    def get_usage_stats(self) -> Dict[str, Any]:
+        """Get current usage statistics."""
+        return {
+            "total_calls": self.usage_stats["total_calls"],
+            "total_tokens": self.usage_stats["total_tokens"],
+            "total_cost": round(self.usage_stats["total_cost"], 4),
+            "calls_this_minute": self.usage_stats["calls_this_minute"],
+            "rate_limited": not self.rate_limiter.can_make_call()
+        }
 
     def complete_batch(self, completions: List[Dict[str, Any]]) -> List[Dict[str, Any]]:
         """Execute multiple agent completions.

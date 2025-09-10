@@ -21,7 +21,7 @@ from fastapi.middleware.cors import CORSMiddleware
 import uvicorn
 
 from ..agent_builder.enhanced_generator import EnhancedAgentBuilder, AgentType
-from ..registry.registry import list_agents, get_agent, upsert_agent, load_registry
+from ..registry.registry import list_agents, get_agent, upsert_agent, load_registry, delete_agent
 from ..orchestrator.chain import run_three_agent_workflow
 from ..storage.cache import new_job_id, put_record, get_record
 from ..config import PROJECT_ROOT, DATA_DIR
@@ -141,6 +141,10 @@ class WarpEngineService:
                 result = await self._run_agent(job, params)
             elif job.command == "get_registry":
                 result = await self._get_registry(job)
+            elif job.command == "delete_agent":
+                result = await self._delete_agent(job, params)
+            elif job.command == "update_agent":
+                result = await self._update_agent(job, params)
             elif job.command == "server_status":
                 result = await self._server_status(job)
             else:
@@ -171,7 +175,17 @@ class WarpEngineService:
         await self.broadcast_update(job)
 
         # Extract parameters
-        agent_type = AgentType[params.get("type", "CUSTOM").upper()]
+        agent_type_str = params.get("type", "RESEARCH").upper()
+
+        # Map string to AgentType enum with fallback
+        agent_type_map = {
+            "RESEARCH": AgentType.RESEARCH,
+            "CODE_GENERATOR": AgentType.CODE_GENERATOR,
+            "DATA_ANALYST": AgentType.DATA_ANALYST,
+            "CUSTOM": AgentType.RESEARCH,  # Default to RESEARCH for CUSTOM
+        }
+
+        agent_type = agent_type_map.get(agent_type_str, AgentType.RESEARCH)
         name = params.get("name", "Custom Agent")
         description = params.get("description", "")
         prompts = params.get("prompts", {})
@@ -253,12 +267,88 @@ class WarpEngineService:
         )
         return {"success": True, "registry": registry}
 
+    async def _delete_agent(self, job: Job, params: Dict[str, Any]) -> Dict[str, Any]:
+        """Delete an agent."""
+        agent_slug = params.get("agent")
+        if not agent_slug:
+            raise ValueError("Agent slug required for deletion")
+
+        job.logs.append(f"Deleting agent: {agent_slug}")
+        job.progress = 25
+        await self.broadcast_update(job)
+
+        # Check if agent exists
+        agent = get_agent(agent_slug)
+        if not agent:
+            raise ValueError(f"Agent not found: {agent_slug}")
+
+        job.logs.append("Agent found, cleaning up files...")
+        job.progress = 50
+        await self.broadcast_update(job)
+
+        # Delete the agent
+        success = delete_agent(agent_slug)
+
+        if success:
+            job.logs.append(f"Successfully deleted agent: {agent_slug}")
+            return {
+                "success": True,
+                "message": f"Agent '{agent_slug}' deleted successfully",
+                "deleted_agent": agent
+            }
+        else:
+            raise ValueError(f"Failed to delete agent: {agent_slug}")
+
+    async def _update_agent(self, job: Job, params: Dict[str, Any]) -> Dict[str, Any]:
+        """Update an existing agent."""
+        agent_slug = params.get("agent")
+        if not agent_slug:
+            raise ValueError("Agent slug required for update")
+
+        job.logs.append(f"Updating agent: {agent_slug}")
+        job.progress = 25
+        await self.broadcast_update(job)
+
+        # Check if agent exists
+        existing_agent = get_agent(agent_slug)
+        if not existing_agent:
+            raise ValueError(f"Agent not found: {agent_slug}")
+
+        job.logs.append("Agent found, preparing update...")
+        job.progress = 50
+        await self.broadcast_update(job)
+
+        # Merge updates with existing agent
+        updated_agent = existing_agent.copy()
+        updated_agent.update(params.get("updates", {}))
+        updated_agent["updated_at"] = time.strftime("%Y-%m-%dT%H:%M:%SZ", time.gmtime())
+
+        # Regenerate the agent with updates
+        upsert_agent(updated_agent)
+
+        job.logs.append(f"Successfully updated agent: {agent_slug}")
+        return {
+            "success": True,
+            "message": f"Agent '{agent_slug}' updated successfully",
+            "updated_agent": updated_agent
+        }
+
     async def _server_status(self, job: Job) -> Dict[str, Any]:
         """Get server status."""
         first_job_time = 0
         if self.jobs:
             first_job_key = list(self.jobs.keys())[0]
             first_job_time = self.jobs[first_job_key].created_at
+
+        # Get API usage stats if available
+        usage_stats = {}
+        try:
+            from ..api.client import A2AClient
+            client = A2AClient()
+            if hasattr(client, 'openai_client') and client.openai_client:
+                usage_stats = client.openai_client.get_usage_stats()
+        except:
+            pass
 
         return {
             "success": True,
@@ -278,6 +368,7 @@ class WarpEngineService:
             ),
             "websocket_connections": len(self.active_websockets),
             "uptime": time.time() - first_job_time if first_job_time else 0,
+            "api_usage": usage_stats,
         }
 
     def _save_job(self, job: Job):

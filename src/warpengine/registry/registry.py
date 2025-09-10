@@ -56,3 +56,70 @@ def upsert_agent(agent: Dict[str, Any]) -> None:
         agent.setdefault("created_at", now)
         agents.append(agent)
     save_registry(reg)
+
+
+def delete_agent(slug: str) -> bool:
+    """Delete an agent from the registry and clean up its files.
+
+    Args:
+        slug: Agent slug to delete
+
+    Returns:
+        True if agent was deleted, False if not found
+    """
+    reg = load_registry()
+    agents = reg.get("agents", [])
+    slug_norm = slug.strip().lower()
+
+    # Find and remove agent from registry
+    agent_to_delete = None
+    for i, agent in enumerate(agents):
+        if agent.get("slug") == slug_norm:
+            agent_to_delete = agent
+            agents.pop(i)
+            break
+
+    if not agent_to_delete:
+        return False
+
+    # Save updated registry
+    save_registry(reg)
+
+    # Clean up agent files
+    _cleanup_agent_files(slug_norm)
+
+    return True
+
+
+def _cleanup_agent_files(slug: str) -> None:
+    """Clean up all files associated with an agent.
+
+    Args:
+        slug: Agent slug
+    """
+    from ..config import AGENTS_ROOT, BIN_DIR, DATA_DIR
+    import shutil
+
+    # Remove agent source directory
+    agent_dir = AGENTS_ROOT / slug
+    if agent_dir.exists():
+        shutil.rmtree(agent_dir)
+
+    # Remove agent binary
+    agent_bin = BIN_DIR / slug
+    if agent_bin.exists():
+        agent_bin.unlink()
+
+    # Remove agent job history
+    jobs_dir = DATA_DIR / "jobs"
+    if jobs_dir.exists():
+        for job_file in jobs_dir.glob("*.json"):
+            try:
+                with open(job_file, 'r') as f:
+                    job_data = json.load(f)
+                # Remove jobs related to this agent
+                if job_data.get("command") in ["create_agent", "run_agent"] and \
+                   job_data.get("params", {}).get("agent") == slug:
+                    job_file.unlink()
+            except:
+                pass
