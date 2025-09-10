@@ -16,7 +16,10 @@ Quick start
    - pip install -U pip setuptools wheel
    - pip install -e .
 
-2) Set environment variables (do NOT paste secrets into history unprotected). In zsh:
+2) Configure environment (safer via .env file):
+   - cp .env.example .env
+   - edit .env and set WARP_ENGINE_API_KEY and WARP_ENGINE_API_BASE
+   Or, export in your shell:
    - export WARP_ENGINE_API_KEY={{YOUR_API_KEY}}
    - export WARP_ENGINE_API_BASE=${WARP_ENGINE_API_BASE:-http://localhost:7001}
 
@@ -26,6 +29,10 @@ Quick start
 
 4) Or run via CLI (pastes from stdin until EOF):
    - warp-engine run-latex
+
+5) Analyze a completed job's metrics:
+   - warp-engine analyze --job-id <JOB_ID>
+   Or via API: GET /api/jobs/<JOB_ID>/metrics
 
 Warp Workflow (in Warp)
 - Create a workflow named "run latex engine"
@@ -39,5 +46,5 @@ Configuration
 
 Notes
 - The A2A client expects a POST ${WARP_ENGINE_API_BASE}/a2a/complete endpoint and returns JSON with an "output" field. Adapt client.py to your API.
-- Cache is stored in data/cache.json with job records.
+- Cache is stored in data/cache.json with job records. Each job includes timings per agent and metrics over input/output text.
 

@@ -2,6 +2,13 @@ import os
 from pathlib import Path
 from typing import Optional
 
+# Load variables from .env if present
+try:
+    from dotenv import load_dotenv  # type: ignore
+    load_dotenv()
+except Exception:
+    pass
+
 
 def project_root() -> Path:
     # src/warpengine/... => project root is 3 levels up
