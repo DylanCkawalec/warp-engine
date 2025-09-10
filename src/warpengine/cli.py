@@ -21,6 +21,9 @@ def main(argv: Optional[list[str]] = None) -> None:
     p_run.add_argument("--host", default="127.0.0.1", help="UI host when using --ui (default: 127.0.0.1)")
     p_run.add_argument("--port", type=int, default=8787, help="UI port when using --ui (default: 8787)")
 
+    p_analyze = sub.add_parser("analyze", help="Analyze a completed job and print metrics")
+    p_analyze.add_argument("--job-id", help="Existing job id to analyze (required)")
+
     args = parser.parse_args(argv)
 
     if args.cmd == "serve":
@@ -45,6 +48,20 @@ def main(argv: Optional[list[str]] = None) -> None:
         job_id, final_output = run_latex_workflow_cli(latex)
         print(final_output)
         print(f"\n[job_id={job_id}]", file=sys.stderr)
+        return
+
+    if args.cmd == "analyze":
+        if not args.job_id:
+            print("--job-id is required", file=sys.stderr)
+            sys.exit(2)
+        from .storage.cache import get_record
+        from .metrics.analysis import extract_printable_metrics
+        rec = get_record(args.job_id)
+        if not rec:
+            print("Job not found", file=sys.stderr)
+            sys.exit(3)
+        metrics = rec.get("metrics") or {}
+        print(extract_printable_metrics(metrics))
         return
 
 

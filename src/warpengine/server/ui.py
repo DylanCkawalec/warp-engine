@@ -10,6 +10,7 @@ import uvicorn
 from ..config import INPUT_DIR, DEFAULT_HOST, DEFAULT_PORT
 from ..orchestrator.chain import run_latex_workflow
 from ..storage.cache import get_record
+from ..metrics.analysis import analyze_text_pair
 
 app = FastAPI(title="Warp Engine")
 
@@ -84,6 +85,20 @@ async def api_get_job(job_id: str):
     if not rec:
         return JSONResponse({"error": "Not found"}, status_code=404)
     return rec
+
+
+@app.get("/api/jobs/{job_id}/metrics")
+async def api_get_job_metrics(job_id: str):
+    rec = get_record(job_id)
+    if not rec:
+        return JSONResponse({"error": "Not found"}, status_code=404)
+    # Recompute or return stored metrics
+    if "metrics" in rec:
+        return rec["metrics"]
+    final = rec.get("final", "")
+    inp_kind = rec.get("input_kind", "latex")
+    # We don't store original input, so metrics recompute on final only
+    return analyze_text_pair("", final)
 
 
 def run_server(host: str = DEFAULT_HOST, port: int = DEFAULT_PORT) -> None:
