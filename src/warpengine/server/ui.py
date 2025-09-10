@@ -11,6 +11,8 @@ from ..config import INPUT_DIR, DEFAULT_HOST, DEFAULT_PORT
 from ..orchestrator.chain import run_latex_workflow
 from ..storage.cache import get_record
 from ..metrics.analysis import analyze_text_pair
+from ..registry.registry import list_agents, get_agent
+from ..agent_builder.generator import create_agent_noninteractive, generate_bin_shim
 
 app = FastAPI(title="Warp Engine")
 
@@ -99,6 +101,37 @@ async def api_get_job_metrics(job_id: str):
     inp_kind = rec.get("input_kind", "latex")
     # We don't store original input, so metrics recompute on final only
     return analyze_text_pair("", final)
+
+
+@app.get("/api/agents")
+async def api_list_agents():
+    return {"agents": list_agents()}
+
+
+@app.post("/api/agents")
+async def api_create_agent(payload: dict):
+    name = payload.get("name")
+    description = payload.get("description", "")
+    prompts = payload.get("prompts", {})
+    if not name or not isinstance(prompts, dict):
+        return JSONResponse({"error": "name and prompts required"}, status_code=400)
+    slug = create_agent_noninteractive(
+        name=name,
+        description=description,
+        plan_prompt=prompts.get("plan", "You are Agent-Plan. Produce a concise plan."),
+        exec_prompt=prompts.get("execute", "You are Agent-Exec. Execute the plan against the input."),
+        refine_prompt=prompts.get("refine", "You are Agent-Refine. Improve clarity and correctness."),
+    )
+    shim = generate_bin_shim(slug)
+    return {"slug": slug, "shim": str(shim)}
+
+
+@app.get("/api/agents/{slug}")
+async def api_get_agent(slug: str):
+    a = get_agent(slug)
+    if not a:
+        return JSONResponse({"error": "Not found"}, status_code=404)
+    return a
 
 
 def run_server(host: str = DEFAULT_HOST, port: int = DEFAULT_PORT) -> None:

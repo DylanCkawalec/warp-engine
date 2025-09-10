@@ -34,17 +34,32 @@ Quick start
    - warp-engine analyze --job-id <JOB_ID>
    Or via API: GET /api/jobs/<JOB_ID>/metrics
 
+6) Agent registry and builder:
+   - List agents: warp-engine agent list or GET /api/agents
+   - Create new agent (interactive): warp-engine new-agent
+     • Or via API: POST /api/agents { name, description, prompts: { plan, execute, refine } }
+   - Run agent: warp-engine agent run --name <agent-slug>
+   - Generated shim: bin/<agent-slug>
+
 Warp Workflow (in Warp)
-- Create a workflow named "run latex engine"
-- Command:
-  /Users/dylanckawalec/Desktop/developer/warp-engine/.venv/bin/warp-engine run-latex --ui
+- Create workflows, for example:
+  - "run latex engine":
+    /Users/dylanckawalec/Desktop/developer/warp-engine/.venv/bin/warp-engine run-latex --ui
+  - "new agent":
+    /Users/dylanckawalec/Desktop/developer/warp-engine/.venv/bin/warp-engine new-agent
+  - "list agents":
+    /Users/dylanckawalec/Desktop/developer/warp-engine/.venv/bin/warp-engine agent list
 
 Configuration
 - WARP_ENGINE_API_KEY: your bearer token (required to call your API)
 - WARP_ENGINE_API_BASE: base URL for your local A2A API (default http://localhost:7001)
 - WARP_ENGINE_PORT: default UI port (8787)
+- WARP_ENGINE_REGISTRY_FILE: override path to the agent registry JSON (default data/registry.json)
+- WARP_ENGINE_AGENTS_ROOT: override path where new agents will be created (default src/warpengine/agents)
+- WARP_ENGINE_BIN_DIR: override path where runnable shims are created (default bin)
 
 Notes
 - The A2A client expects a POST ${WARP_ENGINE_API_BASE}/a2a/complete endpoint and returns JSON with an "output" field. Adapt client.py to your API.
 - Cache is stored in data/cache.json with job records. Each job includes timings per agent and metrics over input/output text.
+- The universal agent registry lives at data/registry.json and is also served at GET /api/agents.
 

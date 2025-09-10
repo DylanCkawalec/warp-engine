@@ -18,4 +18,6 @@ htmlcov/
 input_files/
 !data/.gitkeep
 !input_files/.gitkeep
+bin/
+!bin/.gitkeep
 

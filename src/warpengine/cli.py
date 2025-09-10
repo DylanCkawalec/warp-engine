@@ -5,6 +5,8 @@ from typing import Optional
 
 from .server.ui import run_server
 from .orchestrator.chain import run_latex_workflow_cli
+from .registry.registry import list_agents, get_agent, load_registry
+from .agent_builder.generator import create_agent_interactive, create_agent_noninteractive, generate_bin_shim
 
 
 def main(argv: Optional[list[str]] = None) -> None:
@@ -23,6 +25,21 @@ def main(argv: Optional[list[str]] = None) -> None:
 
     p_analyze = sub.add_parser("analyze", help="Analyze a completed job and print metrics")
     p_analyze.add_argument("--job-id", help="Existing job id to analyze (required)")
+
+    p_reg = sub.add_parser("get-agent-registry", help="Print the agent registry as JSON")
+
+    p_new = sub.add_parser("new-agent", help="Create a new agent via prompts or flags")
+    p_new.add_argument("--name", help="Agent name")
+    p_new.add_argument("--description", help="Agent description")
+    p_new.add_argument("--plan-prompt", help="Plan prompt text")
+    p_new.add_argument("--exec-prompt", help="Execute prompt text")
+    p_new.add_argument("--refine-prompt", help="Refine prompt text")
+
+    p_agent = sub.add_parser("agent", help="Work with agents")
+    sp = p_agent.add_subparsers(dest="agent_cmd", required=True)
+    p_list = sp.add_parser("list", help="List registered agents")
+    p_run_agent = sp.add_parser("run", help="Run an agent workflow with pasted input from stdin")
+    p_run_agent.add_argument("--name", required=True, help="Agent name to run")
 
     args = parser.parse_args(argv)
 
@@ -63,6 +80,51 @@ def main(argv: Optional[list[str]] = None) -> None:
         metrics = rec.get("metrics") or {}
         print(extract_printable_metrics(metrics))
         return
+
+    if args.cmd == "get-agent-registry":
+        reg = load_registry()
+        import json
+        print(json.dumps(reg, indent=2))
+        return
+
+    if args.cmd == "new-agent":
+        if args.name and args.description and args.plan_prompt and args.exec_prompt and args.refine_prompt:
+            slug = create_agent_noninteractive(
+                name=args.name,
+                description=args.description,
+                plan_prompt=args.plan_prompt,
+                exec_prompt=args.exec_prompt,
+                refine_prompt=args.refine_prompt,
+            )
+        else:
+            slug = create_agent_interactive()
+        # Create a runnable shim in bin/
+        shim_path = generate_bin_shim(slug)
+        print(f"Created agent '{slug}'. Run it with: {shim_path} or via 'warp-engine agent run --name {slug}'")
+        return
+
+    if args.cmd == "agent":
+        if args.agent_cmd == "list":
+            agents = list_agents()
+            for a in agents:
+                print(f"- {a['name']} ({a['slug']}) : {a.get('description','')}")
+            return
+        if args.agent_cmd == "run":
+            agent = get_agent(args.name)
+            if not agent:
+                print("Agent not found", file=sys.stderr)
+                sys.exit(4)
+            # Import the runner dynamically
+            import importlib
+            module_path, func_name = agent["entry"].split(":")
+            mod = importlib.import_module(module_path)
+            run_fn = getattr(mod, func_name)
+            print("Paste input text, then Ctrl-D (EOF):\n", file=sys.stderr)
+            text = sys.stdin.read()
+            job_id, final_output = run_fn(text)
+            print(final_output)
+            print(f"\n[job_id={job_id}]", file=sys.stderr)
+            return
 
 
 if __name__ == "__main__":

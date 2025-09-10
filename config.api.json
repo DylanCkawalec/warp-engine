@@ -1,0 +1,17 @@
+{
+  "api_version": "1.0",
+  "description": "Universal agent registry and generator config for warp-engine",
+  "paths": {
+    "registry": "data/registry.json",
+    "agents_root": "src/warpengine/agents",
+    "bin_dir": "bin"
+  },
+  "defaults": {
+    "prompts": {
+      "plan": "You are Agent-Plan. Produce a concise plan.",
+      "execute": "You are Agent-Exec. Execute the plan against the input.",
+      "refine": "You are Agent-Refine. Improve clarity and correctness."
+    }
+  }
+}
+
