@@ -18,6 +18,8 @@ from ..config import AGENTS_ROOT, BIN_DIR, PROJECT_ROOT
 from ..registry.registry import upsert_agent, get_agent
 from ..api.client import A2AClient
 from ..warp_integration.warp_client import WarpTerminalClient, WarpProfile, WarpWorkflow
+from ..staging import StageManager, StageTag, CodeInjector, MetaLookupSystem
+from ..prompt_refiner import PromptRefiner
 
 
 class AgentType(Enum):
@@ -126,6 +128,12 @@ class EnhancedAgentBuilder:
         self.config_path = config_path or PROJECT_ROOT / "config.api.json"
         self.config = self._load_config()
         self.warp_client = None
+        
+        # Initialize staging and refinement systems
+        self.stage_manager = StageManager()
+        self.code_injector = CodeInjector()
+        self.meta_lookup = MetaLookupSystem()
+        self.prompt_refiner = PromptRefiner()
 
         # Try to initialize Warp client
         try:
@@ -251,6 +259,133 @@ class EnhancedAgentBuilder:
                     "refine": refine_prompt,
                 },
             )
+
+    def create_agent_with_staging(
+        self,
+        user_prompt: str,
+        show_refinement: bool = True
+    ) -> str:
+        """
+        Create an agent using the staging system and prompt refinement.
+        
+        Args:
+            user_prompt: Raw user prompt
+            show_refinement: Whether to show refinement process
+            
+        Returns:
+            Agent slug
+        """
+        # Stage 1: Receive and refine prompt
+        initial_stage = self.stage_manager.create_stage(
+            tag=StageTag.PROMPT_RECEIVED,
+            data={"user_prompt": user_prompt}
+        )
+        
+        # Refine the prompt
+        refinement = self.prompt_refiner.refine_prompt(
+            user_prompt,
+            show_realtime=show_refinement
+        )
+        
+        # Stage 2: Prompt refined
+        refined_stage = self.stage_manager.create_stage(
+            tag=StageTag.PROMPT_REFINED,
+            data=refinement.to_dict(),
+            parent_stage=initial_stage.id
+        )
+        
+        # Stage 3: Template selected
+        agent_type = AgentType[refinement.agent_type]
+        template_stage = self.stage_manager.create_stage(
+            tag=StageTag.TEMPLATE_SELECTED,
+            data={
+                "agent_type": agent_type.value,
+                "template_name": agent_type.value  # Just store the name, not the object
+            },
+            parent_stage=refined_stage.id
+        )
+        
+        # Create the agent with refined prompts
+        slug = self.create_agent_from_template(
+            agent_type=agent_type,
+            name=refinement.suggested_name,
+            description=refinement.suggested_description,
+            prompts=refinement.refined_prompts
+        )
+        
+        # Stage 4: Code generated and injected
+        code_stage = self.stage_manager.create_stage(
+            tag=StageTag.CODE_GENERATED,
+            data={"agent_slug": slug},
+            parent_stage=template_stage.id
+        )
+        
+        # Inject code with markers
+        self._inject_agent_code(slug, code_stage.id)
+        
+        # Stage 5: Agent registered
+        final_stage = self.stage_manager.create_stage(
+            tag=StageTag.AGENT_REGISTERED,
+            data={
+                "agent_slug": slug,
+                "registry_entry": get_agent(slug)
+            },
+            parent_stage=code_stage.id
+        )
+        
+        # Display staging summary
+        if show_refinement:
+            self._display_staging_summary(final_stage.id)
+        
+        return slug
+    
+    def _inject_agent_code(self, slug: str, stage_id: str) -> None:
+        """Inject agent code with proper markers."""
+        agent_dir = AGENTS_ROOT / slug
+        runner_file = agent_dir / "runner.py"
+        
+        if runner_file.exists():
+            # Create code block with markers
+            content = runner_file.read_text()
+            block = self.code_injector.create_block(
+                block_id=f"agent_{slug}",
+                content=content,
+                block_type="agent",
+                agent_slug=slug
+            )
+            
+            # Re-write with markers
+            runner_file.write_text(block.content)
+            
+            # Add to stage
+            self.stage_manager.add_code_block(
+                stage_id,
+                {
+                    "file": str(runner_file),
+                    "markers": block.get_markers(),
+                    "lines": len(content.splitlines())
+                }
+            )
+    
+    def _display_staging_summary(self, stage_id: str) -> None:
+        """Display a summary of the staging process."""
+        summary = self.stage_manager.create_stage_summary(stage_id)
+        
+        print("\n" + "="*80)
+        print("📊 STAGING SUMMARY")
+        print("="*80)
+        print(f"Chain Length: {summary['chain_length']} stages")
+        print(f"Stages: {' → '.join(summary['chain_tags'])}")
+        print(f"Code Blocks: {summary['total_code_blocks']}")
+        
+        if summary['prompts_evolution']:
+            print("\n📝 Prompt Evolution:")
+            for prompt_type, evolution in summary['prompts_evolution'].items():
+                print(f"  {prompt_type}:")
+                for step in evolution:
+                    print(f"    • {step['stage']}: {step['prompt']}")
+        
+        print("\n✅ Agent creation complete with full staging history!\n")
 
     def create_agent_from_template(
         self,

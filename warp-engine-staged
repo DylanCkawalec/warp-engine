@@ -1,0 +1,193 @@
+#!/usr/bin/env bash
+# Warp Engine Staged - Create agents with staging and prompt refinement
+
+# Colors for output
+RED='\033[0;31m'
+GREEN='\033[0;32m'
+YELLOW='\033[1;33m'
+BLUE='\033[0;34m'
+CYAN='\033[0;36m'
+MAGENTA='\033[0;35m'
+NC='\033[0m' # No Color
+
+# Get script directory
+SCRIPT_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
+cd "$SCRIPT_DIR"
+
+# Activate virtual environment
+if [ -d ".venv" ]; then
+    source .venv/bin/activate
+else
+    echo -e "${RED}Virtual environment not found. Run ./install.sh first.${NC}"
+    exit 1
+fi
+
+# Check for .env
+if [ ! -f ".env" ]; then
+    echo -e "${RED}Configuration not found. Run ./install.sh first.${NC}"
+    exit 1
+fi
+
+source .env
+
+# Display banner
+clear
+echo -e "${MAGENTA}"
+echo "╔══════════════════════════════════════════════════════════╗"
+echo "║      WARP ENGINE - STAGED AGENT CREATION                ║"
+echo "║      Meta-Tagged Intelligent Code Evolution             ║"
+echo "╚══════════════════════════════════════════════════════════╝"
+echo -e "${NC}"
+
+echo -e "${CYAN}This system features:${NC}"
+echo "  • ${GREEN}Prompt Refinement${NC} - Transforms raw prompts into perfect instructions"
+echo "  • ${GREEN}Staging System${NC} - Meta-tags every step for understanding"
+echo "  • ${GREEN}Code Injection${NC} - Smart markers for mechanical evolution"
+echo "  • ${GREEN}Meta Lookup${NC} - Knows exactly where everything is"
+echo ""
+echo -e "${YELLOW}The protocol is limited to 3 prompts per agent (plan/execute/refine)${NC}"
+echo -e "${YELLOW}All processing is local and deterministic${NC}"
+echo ""
+
+# Main function
+case "${1:-}" in
+    create)
+        echo -e "${GREEN}📝 Enter your agent request:${NC}"
+        echo -e "${CYAN}(Describe what you want the agent to do in natural language)${NC}"
+        echo ""
+        read -r -p "> " USER_PROMPT
+        
+        echo ""
+        echo -e "${BLUE}Processing your request...${NC}"
+        echo ""
+        
+        python3 -c "
+import sys
+sys.path.insert(0, 'src')
+
+from warpengine.agent_builder.enhanced_generator import EnhancedAgentBuilder
+
+builder = EnhancedAgentBuilder()
+
+user_prompt = '''$USER_PROMPT'''
+
+try:
+    print('🚀 Creating agent with staging and refinement...\n')
+    slug = builder.create_agent_with_staging(
+        user_prompt=user_prompt,
+        show_refinement=True
+    )
+    
+    print(f'\n✅ Agent created successfully!')
+    print(f'  Name: {slug}')
+    print(f'  Location: src/warpengine/agents/{slug}/')
+    print(f'  Binary: ./bin/{slug}')
+    print(f'\nRun your agent:')
+    print(f'  echo \"your input\" | ./bin/{slug}')
+    
+except Exception as e:
+    print(f'❌ Error: {e}')
+"
+        ;;
+        
+    analyze)
+        AGENT="${2:-}"
+        if [ -z "$AGENT" ]; then
+            echo -e "${RED}Usage: $0 analyze <agent_slug>${NC}"
+            exit 1
+        fi
+        
+        echo -e "${BLUE}Analyzing agent: $AGENT${NC}"
+        echo ""
+        
+        python3 -c "
+import sys
+sys.path.insert(0, 'src')
+
+from warpengine.staging import StageManager, MetaLookupSystem
+from warpengine.registry.registry import get_agent
+
+agent_slug = '$AGENT'
+
+# Get agent from registry
+agent = get_agent(agent_slug)
+if not agent:
+    print(f'❌ Agent not found: {agent_slug}')
+    sys.exit(1)
+
+print(f'📦 Agent: {agent[\"name\"]}')
+print(f'  Slug: {agent_slug}')
+print(f'  Type: {agent.get(\"type\", \"unknown\")}')
+print(f'  Description: {agent.get(\"description\", \"No description\")}')
+
+# Get staging history
+stage_manager = StageManager()
+stages = stage_manager.get_agent_stages(agent_slug)
+
+print(f'\n📊 Staging History:')
+if stages:
+    for stage in stages:
+        print(f'  • {stage.tag.value} ({stage.timestamp})')
+else:
+    print('  No staging history found')
+
+# Analyze code structure
+meta_lookup = MetaLookupSystem()
+entity = meta_lookup.find_entity(agent_slug, 'agent')
+
+if entity:
+    print(f'\n📄 Code Analysis:')
+    print(f'  File: {entity.file_path}')
+    print(f'  Lines: {entity.line_end}')
+    
+    # Check for markers
+    content = entity.file_path.read_text()
+    if 'WARP_ENGINE_AGENT_BEGIN' in content:
+        print('  ✅ Code markers present')
+    else:
+        print('  ⚠️  No code markers found')
+"
+        ;;
+        
+    list-stages)
+        echo -e "${BLUE}📊 All Staging Records:${NC}"
+        echo ""
+        
+        python3 -c "
+import sys
+sys.path.insert(0, 'src')
+
+from warpengine.staging import StageManager
+
+stage_manager = StageManager()
+
+# Get latest stages by type
+from warpengine.staging import StageTag
+
+for tag in StageTag:
+    latest = stage_manager.get_latest_stage(tag)
+    if latest:
+        print(f'{tag.value}:')
+        print(f'  ID: {latest.id[:8]}...')
+        print(f'  Time: {latest.timestamp}')
+        if 'agent_slug' in latest.data:
+            print(f'  Agent: {latest.data[\"agent_slug\"]}')
+        print()
+"
+        ;;
+        
+    *)
+        echo "Usage: $0 {create|analyze|list-stages}"
+        echo ""
+        echo "Commands:"
+        echo "  create       - Create a new agent with staging and refinement"
+        echo "  analyze      - Analyze an existing agent's staging history"
+        echo "  list-stages  - List all staging records"
+        echo ""
+        echo "Examples:"
+        echo "  $0 create"
+        echo "  $0 analyze research_agent"
+        echo "  $0 list-stages"
+        exit 1
+        ;;
+esac
