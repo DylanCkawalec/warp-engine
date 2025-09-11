@@ -1,0 +1,21 @@
+version: 0.2
+
+phases:
+  pre_build:
+    commands:
+      - echo "Installing dependencies..."
+      - pip install -r requirements.txt
+      - echo "Setting up environment..."
+      - export WARP_ENGINE_HOST=0.0.0.0
+      - export WARP_ENGINE_PORT=8787
+      - echo "MCP transport: stdio"
+  build:
+    commands:
+      - echo "Building Warp Engine..."
+      - python -c "import warpengine; print('Warp Engine imported successfully')"
+      - echo "Build completed"
+  post_build:
+    commands:
+      - echo "Post-build setup..."
+      - mkdir -p data bin
+      - echo "Warp Engine ready for deployment"
