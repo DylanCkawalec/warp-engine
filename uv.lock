@@ -1,0 +1,83 @@
+requires-python = ">=3.10"
+version = 1
+
+[metadata]
+lock-format = "simple"
+
+[metadata.root]
+name = "warp-engine"
+version = "2.0.0"
+source = { directory = ".", editable = true }
+
+[[package]]
+name = "warp-engine"
+version = "2.0.0"
+source = { directory = ".", editable = true }
+dependencies = [
+  { name = "fastapi", version = "0.95.2" },
+  { name = "uvicorn", version = "0.23.2" },
+  { name = "pydantic", version = "1.10.15" },
+  { name = "requests", version = "2.31.0" },
+  { name = "python-multipart", version = "0.0.9" },
+  { name = "websockets", version = "12.0" },
+  { name = "openai", version = "1.0.0" },
+  { name = "python-dotenv", version = "1.0.0" },
+  { name = "pyyaml", version = "6.0.1" },
+  { name = "rich", version = "13.7.1" },
+  { name = "aiofiles", version = "23.2.1" },
+]
+
+[[package]]
+name = "fastapi"
+version = "0.95.2"
+source = { registry = "pypi" }
+
+[[package]]
+name = "uvicorn"
+version = "0.23.2"
+source = { registry = "pypi" }
+
+[[package]]
+name = "pydantic"
+version = "1.10.15"
+source = { registry = "pypi" }
+
+[[package]]
+name = "requests"
+version = "2.31.0"
+source = { registry = "pypi" }
+
+[[package]]
+name = "python-multipart"
+version = "0.0.9"
+source = { registry = "pypi" }
+
+[[package]]
+name = "websockets"
+version = "12.0"
+source = { registry = "pypi" }
+
+[[package]]
+name = "openai"
+version = "1.0.0"
+source = { registry = "pypi" }
+
+[[package]]
+name = "python-dotenv"
+version = "1.0.0"
+source = { registry = "pypi" }
+
+[[package]]
+name = "pyyaml"
+version = "6.0.1"
+source = { registry = "pypi" }
+
+[[package]]
+name = "rich"
+version = "13.7.1"
+source = { registry = "pypi" }
+
+[[package]]
+name = "aiofiles"
+version = "23.2.1"
+source = { registry = "pypi" }
