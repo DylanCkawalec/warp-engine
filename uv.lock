@@ -14,9 +14,9 @@ name = "warp-engine"
 version = "2.0.0"
 source = { directory = ".", editable = true }
 dependencies = [
-  { name = "fastapi", version = "0.111.0" },
-  { name = "uvicorn", version = "0.29.0" },
-  { name = "pydantic", version = "2.7.0" },
+  { name = "fastapi", version = "0.95.2" },
+  { name = "uvicorn", version = "0.23.2" },
+  { name = "pydantic", version = "1.10.15" },
   { name = "requests", version = "2.31.0" },
   { name = "python-multipart", version = "0.0.9" },
   { name = "websockets", version = "12.0" },
@@ -29,17 +29,17 @@ dependencies = [
 
 [[package]]
 name = "fastapi"
-version = "0.111.0"
+version = "0.95.2"
 source = { registry = "pypi" }
 
 [[package]]
 name = "uvicorn"
-version = "0.29.0"
+version = "0.23.2"
 source = { registry = "pypi" }
 
 [[package]]
 name = "pydantic"
-version = "2.7.0"
+version = "1.10.15"
 source = { registry = "pypi" }
 
 [[package]]
@@ -80,15 +80,4 @@ source = { registry = "pypi" }
 [[package]]
 name = "aiofiles"
 version = "23.2.1"
-source = { registry = "pypi" }
-
-# Optional test deps
-[[package]]
-name = "pytest"
-version = "8.2.0"
-source = { registry = "pypi" }
-
-[[package]]
-name = "httpx"
-version = "0.27.2"
 source = { registry = "pypi" }
