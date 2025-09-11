@@ -1,52 +1,52 @@
-[Container] 2025/09/11 02:19:55.196619 Running on CodeBuild On-demand
-[Container] 2025/09/11 02:19:55.196632 Waiting for agent ping
-[Container] 2025/09/11 02:19:55.398096 Waiting for DOWNLOAD_SOURCE
-[Container] 2025/09/11 02:19:56.675205 Phase is DOWNLOAD_SOURCE
-[Container] 2025/09/11 02:19:56.676219 CODEBUILD_SRC_DIR=/codebuild/output/src1556/src
-[Container] 2025/09/11 02:19:56.676324 CODEBUILD_SRC_DIR_HANDLERS=/codebuild/output/src1556/src/s3/02
-[Container] 2025/09/11 02:19:56.676400 CODEBUILD_SRC_DIR_DOCKERFILES=/codebuild/output/src1556/src/s3/01
-[Container] 2025/09/11 02:19:56.676969 YAML location is /codebuild/readonly/buildspec.yml
-[Container] 2025/09/11 02:19:56.681419 Processing environment variables
-[Container] 2025/09/11 02:19:56.885071 No runtime version selected in buildspec.
-[Container] 2025/09/11 02:19:56.924529 Moving to directory /codebuild/output/src1556/src
-[Container] 2025/09/11 02:19:56.924551 Cache is not defined in the buildspec
-[Container] 2025/09/11 02:19:56.962083 Skip cache due to: no paths specified to be cached
-[Container] 2025/09/11 02:19:56.962412 Registering with agent
-[Container] 2025/09/11 02:19:56.999269 Phases found in YAML: 3
-[Container] 2025/09/11 02:19:56.999338  PRE_BUILD: 7 commands
-[Container] 2025/09/11 02:19:56.999348  BUILD: 2 commands
-[Container] 2025/09/11 02:19:56.999405  POST_BUILD: 11 commands
-[Container] 2025/09/11 02:19:56.999746 Phase complete: DOWNLOAD_SOURCE State: SUCCEEDED
-[Container] 2025/09/11 02:19:56.999758 Phase context status code:  Message: 
-[Container] 2025/09/11 02:19:57.102090 Entering phase INSTALL
-[Container] 2025/09/11 02:19:57.144417 Phase complete: INSTALL State: SUCCEEDED
-[Container] 2025/09/11 02:19:57.144434 Phase context status code:  Message: 
-[Container] 2025/09/11 02:19:57.179008 Entering phase PRE_BUILD
-[Container] 2025/09/11 02:19:57.215641 Running command export SRC_DIR="$CODEBUILD_SRC_DIR/$SOURCE_REPOSITORY"
+[Container] 2025/09/11 02:22:44.441058 Running on CodeBuild On-demand
+[Container] 2025/09/11 02:22:44.441073 Waiting for agent ping
+[Container] 2025/09/11 02:22:44.642620 Waiting for DOWNLOAD_SOURCE
+[Container] 2025/09/11 02:22:46.022870 Phase is DOWNLOAD_SOURCE
+[Container] 2025/09/11 02:22:46.024041 CODEBUILD_SRC_DIR=/codebuild/output/src3398/src
+[Container] 2025/09/11 02:22:46.024153 CODEBUILD_SRC_DIR_HANDLERS=/codebuild/output/src3398/src/s3/02
+[Container] 2025/09/11 02:22:46.024228 CODEBUILD_SRC_DIR_DOCKERFILES=/codebuild/output/src3398/src/s3/01
+[Container] 2025/09/11 02:22:46.024816 YAML location is /codebuild/readonly/buildspec.yml
+[Container] 2025/09/11 02:22:46.028858 Processing environment variables
+[Container] 2025/09/11 02:22:46.244879 No runtime version selected in buildspec.
+[Container] 2025/09/11 02:22:46.273771 Moving to directory /codebuild/output/src3398/src
+[Container] 2025/09/11 02:22:46.273795 Cache is not defined in the buildspec
+[Container] 2025/09/11 02:22:46.312840 Skip cache due to: no paths specified to be cached
+[Container] 2025/09/11 02:22:46.313220 Registering with agent
+[Container] 2025/09/11 02:22:46.349512 Phases found in YAML: 3
+[Container] 2025/09/11 02:22:46.349533  PRE_BUILD: 7 commands
+[Container] 2025/09/11 02:22:46.349538  BUILD: 2 commands
+[Container] 2025/09/11 02:22:46.349541  POST_BUILD: 11 commands
+[Container] 2025/09/11 02:22:46.350025 Phase complete: DOWNLOAD_SOURCE State: SUCCEEDED
+[Container] 2025/09/11 02:22:46.350039 Phase context status code:  Message: 
+[Container] 2025/09/11 02:22:46.454540 Entering phase INSTALL
+[Container] 2025/09/11 02:22:46.493607 Phase complete: INSTALL State: SUCCEEDED
+[Container] 2025/09/11 02:22:46.493628 Phase context status code:  Message: 
+[Container] 2025/09/11 02:22:46.529951 Entering phase PRE_BUILD
+[Container] 2025/09/11 02:22:46.568646 Running command export SRC_DIR="$CODEBUILD_SRC_DIR/$SOURCE_REPOSITORY"
 
-[Container] 2025/09/11 02:19:57.221702 Running command git clone --single-branch --branch $SOURCE_BRANCH https://x-access-token:$SOURCE_REPOSITORY_CREDENTIALS@$SOURCE_REPOSITORY.git $SRC_DIR
-Cloning into '/codebuild/output/src1556/src/github.com/DylanCkawalec/warp-engine'...
+[Container] 2025/09/11 02:22:46.575182 Running command git clone --single-branch --branch $SOURCE_BRANCH https://x-access-token:$SOURCE_REPOSITORY_CREDENTIALS@$SOURCE_REPOSITORY.git $SRC_DIR
+Cloning into '/codebuild/output/src3398/src/github.com/DylanCkawalec/warp-engine'...
 
-[Container] 2025/09/11 02:19:58.649814 Running command export RESOLVED_SOURCE_VERSION=$(git -C $SRC_DIR rev-parse HEAD)
+[Container] 2025/09/11 02:22:48.608166 Running command export RESOLVED_SOURCE_VERSION=$(git -C $SRC_DIR rev-parse HEAD)
 
-[Container] 2025/09/11 02:19:58.656923 Running command aws ecr get-login-password | docker login --username AWS --password-stdin $PROJECT_BUILD_IMAGES_REPOSITORY_URI
+[Container] 2025/09/11 02:22:48.615222 Running command aws ecr get-login-password | docker login --username AWS --password-stdin $PROJECT_BUILD_IMAGES_REPOSITORY_URI
 WARNING! Your password will be stored unencrypted in /root/.docker/config.json.
 Configure a credential helper to remove this warning. See
 https://docs.docker.com/engine/reference/commandline/login/#credential-stores
 
 Login Succeeded
 
-[Container] 2025/09/11 02:20:10.958487 Running command cp -r $CODEBUILD_SRC_DIR_HANDLERS $SRC_DIR/alpic
+[Container] 2025/09/11 02:23:02.316265 Running command cp -r $CODEBUILD_SRC_DIR_HANDLERS $SRC_DIR/alpic
 
-[Container] 2025/09/11 02:20:10.965516 Running command export TRANSPORT_TYPE=$( (grep -r "import.*from ['\"]@modelcontextprotocol/sdk/server/\(stdio\|sse\|streamableHttp\)[.'\"]" --include="*.ts" . | grep -o -E "(stdio|sse|streamableHttp)" | head -1 | tr '[:upper:]' '[:lower:]';grep -r "mcp.run(.*transport=['\"]\(stdio\|sse\|streamable-http\|http\)['\"]" --include="*.py" . | grep -o -E "(stdio|sse|streamable-http|http)" | head -1;grep -r "mcp.run(" --include="*.py" . | head -1 | sed 's/.*/stdio/') | head -1)
+[Container] 2025/09/11 02:23:02.323341 Running command export TRANSPORT_TYPE=$( (grep -r "import.*from ['\"]@modelcontextprotocol/sdk/server/\(stdio\|sse\|streamableHttp\)[.'\"]" --include="*.ts" . | grep -o -E "(stdio|sse|streamableHttp)" | head -1 | tr '[:upper:]' '[:lower:]';grep -r "mcp.run(.*transport=['\"]\(stdio\|sse\|streamable-http\|http\)['\"]" --include="*.py" . | grep -o -E "(stdio|sse|streamable-http|http)" | head -1;grep -r "mcp.run(" --include="*.py" . | head -1 | sed 's/.*/stdio/') | head -1)
 
-[Container] 2025/09/11 02:20:11.056012 Running command if [ -z "$TRANSPORT_TYPE" ]; then echo "Error: No MCP transport found"; exit 1; else echo "MCP transport: $TRANSPORT_TYPE"; fi
+[Container] 2025/09/11 02:23:02.421259 Running command if [ -z "$TRANSPORT_TYPE" ]; then echo "Error: No MCP transport found"; exit 1; else echo "MCP transport: $TRANSPORT_TYPE"; fi
 MCP transport: stdio
 
-[Container] 2025/09/11 02:20:11.062120 Phase complete: PRE_BUILD State: SUCCEEDED
-[Container] 2025/09/11 02:20:11.062140 Phase context status code:  Message: 
-[Container] 2025/09/11 02:20:11.104575 Entering phase BUILD
-[Container] 2025/09/11 02:20:11.105926 Running command docker buildx build --provenance=false --platform linux/amd64 --build-arg INSTALL_COMMAND="${BUILD_ARG_INSTALL_COMMAND}" --build-arg BUILD_COMMAND="${BUILD_ARG_BUILD_COMMAND}" --build-arg BUILD_OUTPUT_DIR="${BUILD_ARG_BUILD_OUTPUT_DIR}" --build-arg START_COMMAND="${BUILD_ARG_START_COMMAND}" --build-arg TRANSPORT_TYPE=$TRANSPORT_TYPE -t $PROJECT_BUILD_IMAGES_REPOSITORY_URI:$RESOLVED_SOURCE_VERSION -t $PROJECT_BUILD_IMAGES_REPOSITORY_URI:latest -f $CODEBUILD_SRC_DIR_DOCKERFILES/$RUNTIME $SRC_DIR
+[Container] 2025/09/11 02:23:02.427444 Phase complete: PRE_BUILD State: SUCCEEDED
+[Container] 2025/09/11 02:23:02.427459 Phase context status code:  Message: 
+[Container] 2025/09/11 02:23:02.464516 Entering phase BUILD
+[Container] 2025/09/11 02:23:02.465966 Running command docker buildx build --provenance=false --platform linux/amd64 --build-arg INSTALL_COMMAND="${BUILD_ARG_INSTALL_COMMAND}" --build-arg BUILD_COMMAND="${BUILD_ARG_BUILD_COMMAND}" --build-arg BUILD_OUTPUT_DIR="${BUILD_ARG_BUILD_OUTPUT_DIR}" --build-arg START_COMMAND="${BUILD_ARG_START_COMMAND}" --build-arg TRANSPORT_TYPE=$TRANSPORT_TYPE -t $PROJECT_BUILD_IMAGES_REPOSITORY_URI:$RESOLVED_SOURCE_VERSION -t $PROJECT_BUILD_IMAGES_REPOSITORY_URI:latest -f $CODEBUILD_SRC_DIR_DOCKERFILES/$RUNTIME $SRC_DIR
 #0 building with "default" instance using docker driver
 
 #1 [internal] load build definition from python3.13
@@ -54,123 +54,132 @@ MCP transport: stdio
 #1 DONE 0.0s
 
 #2 [internal] load metadata for public.ecr.aws/lambda/python:3.13
-#2 DONE 0.4s
+#2 ...
 
 #3 [internal] load metadata for ghcr.io/astral-sh/uv:0.8.15
-#3 DONE 0.6s
+#3 DONE 0.3s
+
+#2 [internal] load metadata for public.ecr.aws/lambda/python:3.13
+#2 DONE 0.4s
 
 #4 [internal] load metadata for public.ecr.aws/lambda/nodejs:22
-#4 DONE 0.5s
+#4 DONE 0.4s
 
 #5 [internal] load .dockerignore
 #5 transferring context: 2B done
 #5 DONE 0.0s
 
 #6 [internal] load build context
-#6 transferring context: 484.23kB 0.0s done
-#6 DONE 0.0s
+#6 transferring context: 486.23kB 0.0s done
+#6 DONE 0.1s
 
-#7 [uv 1/1] FROM ghcr.io/astral-sh/uv:0.8.15@sha256:a5727064a0de127bdb7c9d3c1383f3a9ac307d9f2d8a391edc7896c54289ced0
-#7 resolve ghcr.io/astral-sh/uv:0.8.15@sha256:a5727064a0de127bdb7c9d3c1383f3a9ac307d9f2d8a391edc7896c54289ced0 0.1s done
-#7 DONE 0.1s
+#7 [builder 1/2] FROM public.ecr.aws/lambda/python:3.13@sha256:1618ba836b700c8bf3daa2637e0949a323724bfca49b751a4ff4614295da9402
+#7 resolve public.ecr.aws/lambda/python:3.13@sha256:1618ba836b700c8bf3daa2637e0949a323724bfca49b751a4ff4614295da9402
+#7 resolve public.ecr.aws/lambda/python:3.13@sha256:1618ba836b700c8bf3daa2637e0949a323724bfca49b751a4ff4614295da9402 0.1s done
+#7 sha256:cf3f8ccf59bb8a5521b534e49ed2704708ee64e1e932f781f054797204e9d4ef 0B / 2.96MB 0.1s
+#7 sha256:b7d3cdfbb732fe6d1099312f213fad0b0f32833c188c1761642332f416729a7c 4.65kB / 4.65kB done
+#7 sha256:261756bd1a975bdc797ece9842cb8c35a9f90b829bbc617d3bd31c695b5f9748 4.19MB / 36.76MB 0.1s
+#7 sha256:1618ba836b700c8bf3daa2637e0949a323724bfca49b751a4ff4614295da9402 772B / 772B done
+#7 sha256:41fbc877d8680baeffd121097d9ee90744610d0e5c518fadfec273309bb953a0 1.58kB / 1.58kB done
+#7 sha256:cf3f8ccf59bb8a5521b534e49ed2704708ee64e1e932f781f054797204e9d4ef 2.96MB / 2.96MB 0.1s done
+#7 sha256:261756bd1a975bdc797ece9842cb8c35a9f90b829bbc617d3bd31c695b5f9748 24.12MB / 36.76MB 0.2s
+#7 sha256:261756bd1a975bdc797ece9842cb8c35a9f90b829bbc617d3bd31c695b5f9748 36.76MB / 36.76MB 0.4s done
+#7 sha256:6aa49205a964781a82b0e3f9411ca260714bd3ece7b45b1d7ce24bc4b18d823f 0B / 88.13kB 0.4s
+#7 sha256:6aa49205a964781a82b0e3f9411ca260714bd3ece7b45b1d7ce24bc4b18d823f 88.13kB / 88.13kB 0.5s done
+#7 sha256:2c246d9c8dfff2e3edacc7397e09507aa4334f045817569c945e36e62bd440ba 416B / 416B 0.6s done
+#7 sha256:b04a5db728bd1ab1c35788bd461a5858bfe51e6282d8f9bc05ac037620b26763 0B / 155.01MB 0.6s
+#7 sha256:36b929a4ae1df723145f8cf737b0a8823400d51e6a098268befa84ce872baadf 0B / 14.19kB 0.6s
+#7 sha256:b04a5db728bd1ab1c35788bd461a5858bfe51e6282d8f9bc05ac037620b26763 11.51MB / 155.01MB 0.7s
+#7 sha256:36b929a4ae1df723145f8cf737b0a8823400d51e6a098268befa84ce872baadf 14.19kB / 14.19kB 0.7s
+#7 sha256:b04a5db728bd1ab1c35788bd461a5858bfe51e6282d8f9bc05ac037620b26763 24.12MB / 155.01MB 0.8s
+#7 sha256:36b929a4ae1df723145f8cf737b0a8823400d51e6a098268befa84ce872baadf 14.19kB / 14.19kB 0.7s done
+#7 extracting sha256:261756bd1a975bdc797ece9842cb8c35a9f90b829bbc617d3bd31c695b5f9748 0.2s
+#7 sha256:b04a5db728bd1ab1c35788bd461a5858bfe51e6282d8f9bc05ac037620b26763 38.80MB / 155.01MB 0.9s
+#7 sha256:b04a5db728bd1ab1c35788bd461a5858bfe51e6282d8f9bc05ac037620b26763 71.30MB / 155.01MB 1.1s
+#7 sha256:b04a5db728bd1ab1c35788bd461a5858bfe51e6282d8f9bc05ac037620b26763 84.05MB / 155.01MB 1.2s
+#7 sha256:b04a5db728bd1ab1c35788bd461a5858bfe51e6282d8f9bc05ac037620b26763 97.52MB / 155.01MB 1.3s
+#7 sha256:b04a5db728bd1ab1c35788bd461a5858bfe51e6282d8f9bc05ac037620b26763 106.95MB / 155.01MB 1.4s
+#7 sha256:b04a5db728bd1ab1c35788bd461a5858bfe51e6282d8f9bc05ac037620b26763 120.59MB / 155.01MB 1.5s
+#7 sha256:b04a5db728bd1ab1c35788bd461a5858bfe51e6282d8f9bc05ac037620b26763 131.07MB / 155.01MB 1.6s
+#7 sha256:b04a5db728bd1ab1c35788bd461a5858bfe51e6282d8f9bc05ac037620b26763 145.75MB / 155.01MB 1.7s
+#7 sha256:b04a5db728bd1ab1c35788bd461a5858bfe51e6282d8f9bc05ac037620b26763 155.01MB / 155.01MB 1.8s
+#7 sha256:b04a5db728bd1ab1c35788bd461a5858bfe51e6282d8f9bc05ac037620b26763 155.01MB / 155.01MB 2.0s done
+#7 ...
 
-#8 [builder 1/2] FROM public.ecr.aws/lambda/python:3.13@sha256:1618ba836b700c8bf3daa2637e0949a323724bfca49b751a4ff4614295da9402
-#8 resolve public.ecr.aws/lambda/python:3.13@sha256:1618ba836b700c8bf3daa2637e0949a323724bfca49b751a4ff4614295da9402 0.1s done
-#8 DONE 0.1s
+#8 [uv 1/1] FROM ghcr.io/astral-sh/uv:0.8.15@sha256:a5727064a0de127bdb7c9d3c1383f3a9ac307d9f2d8a391edc7896c54289ced0
+#8 resolve ghcr.io/astral-sh/uv:0.8.15@sha256:a5727064a0de127bdb7c9d3c1383f3a9ac307d9f2d8a391edc7896c54289ced0 0.1s done
+#8 sha256:b41f16da0a4ff28eaba924250b5c0600dea70fe45f025c028440903b649e7009 1.30kB / 1.30kB done
+#8 sha256:a5727064a0de127bdb7c9d3c1383f3a9ac307d9f2d8a391edc7896c54289ced0 2.19kB / 2.19kB done
+#8 sha256:1ececcacbbde240ffca54d400df86e4fdd38f29c1a2366299279d197e92eaed3 669B / 669B done
+#8 sha256:b5c1d8a02beb46ee3f43053f7563d00d605bb930f63bfbcececd04a7455f5b80 21.39MB / 21.39MB 1.1s done
+#8 sha256:62e48a8cb359f6e3f4375bbaac58fc12a40797b94590ce447f61d2f3f190c493 98B / 98B 1.1s done
+#8 extracting sha256:b5c1d8a02beb46ee3f43053f7563d00d605bb930f63bfbcececd04a7455f5b80 1.0s done
+#8 extracting sha256:62e48a8cb359f6e3f4375bbaac58fc12a40797b94590ce447f61d2f3f190c493 done
+#8 DONE 2.6s
+
+#7 [builder 1/2] FROM public.ecr.aws/lambda/python:3.13@sha256:1618ba836b700c8bf3daa2637e0949a323724bfca49b751a4ff4614295da9402
+#7 extracting sha256:6aa49205a964781a82b0e3f9411ca260714bd3ece7b45b1d7ce24bc4b18d823f
+#7 extracting sha256:6aa49205a964781a82b0e3f9411ca260714bd3ece7b45b1d7ce24bc4b18d823f done
+#7 extracting sha256:2c246d9c8dfff2e3edacc7397e09507aa4334f045817569c945e36e62bd440ba done
+#7 extracting sha256:cf3f8ccf59bb8a5521b534e49ed2704708ee64e1e932f781f054797204e9d4ef 0.1s done
+#7 extracting sha256:b04a5db728bd1ab1c35788bd461a5858bfe51e6282d8f9bc05ac037620b26763
+#7 extracting sha256:b04a5db728bd1ab1c35788bd461a5858bfe51e6282d8f9bc05ac037620b26763 5.0s
+#7 ...
 
 #9 [nodejs 1/2] FROM public.ecr.aws/lambda/nodejs:22@sha256:8d25e3128e34b3c75dd15dca017fa512d05ea7e036ba47976ca7c14462fe9f7c
-#9 resolve public.ecr.aws/lambda/nodejs:22@sha256:8d25e3128e34b3c75dd15dca017fa512d05ea7e036ba47976ca7c14462fe9f7c
 #9 resolve public.ecr.aws/lambda/nodejs:22@sha256:8d25e3128e34b3c75dd15dca017fa512d05ea7e036ba47976ca7c14462fe9f7c 0.1s done
 #9 sha256:7fd9e7c76cac8af7b5ad763578418eb2f83d910211b446d3a5cdaa2fdfb25e25 1.58kB / 1.58kB done
-#9 sha256:261756bd1a975bdc797ece9842cb8c35a9f90b829bbc617d3bd31c695b5f9748 13.63MB / 36.76MB 0.1s
+#9 sha256:34a57df743c3516c5e5d6ebf8b30d6c20034d81ec2cfffccb00a8f1bd9b45aa7 88.12kB / 88.12kB 0.1s done
 #9 sha256:8d25e3128e34b3c75dd15dca017fa512d05ea7e036ba47976ca7c14462fe9f7c 772B / 772B done
+#9 sha256:801d98b6019ef74775f456673b60226088f4aef82d52ed2741dee9b158a3d552 416B / 416B 0.1s done
 #9 sha256:b445dc09b1e4f7f870312b321ea59af99572d4be1d4738f5e7b83639ae33bd7b 4.65kB / 4.65kB done
-#9 sha256:261756bd1a975bdc797ece9842cb8c35a9f90b829bbc617d3bd31c695b5f9748 36.76MB / 36.76MB 0.2s done
+#9 sha256:a838507c70456b68b3559446c4eb039031bf2a668da533980dd9f13cbc258c6e 64.80MB / 64.80MB 1.0s done
+#9 sha256:d3b15c10cb0f03c9f8ab45e4fc08d68d59491a6ba80d4f878ebfa23c8a9c4362 23.05MB / 23.05MB 0.5s done
 #9 sha256:cf3f8ccf59bb8a5521b534e49ed2704708ee64e1e932f781f054797204e9d4ef 2.96MB / 2.96MB 0.2s done
-#9 extracting sha256:261756bd1a975bdc797ece9842cb8c35a9f90b829bbc617d3bd31c695b5f9748
-#9 sha256:34a57df743c3516c5e5d6ebf8b30d6c20034d81ec2cfffccb00a8f1bd9b45aa7 0B / 88.12kB 0.5s
-#9 sha256:34a57df743c3516c5e5d6ebf8b30d6c20034d81ec2cfffccb00a8f1bd9b45aa7 88.12kB / 88.12kB 0.6s done
-#9 sha256:801d98b6019ef74775f456673b60226088f4aef82d52ed2741dee9b158a3d552 416B / 416B 0.6s done
-#9 sha256:a838507c70456b68b3559446c4eb039031bf2a668da533980dd9f13cbc258c6e 0B / 64.80MB 0.7s
-#9 sha256:d3b15c10cb0f03c9f8ab45e4fc08d68d59491a6ba80d4f878ebfa23c8a9c4362 0B / 23.05MB 0.7s
-#9 sha256:a838507c70456b68b3559446c4eb039031bf2a668da533980dd9f13cbc258c6e 6.29MB / 64.80MB 0.8s
-#9 sha256:a838507c70456b68b3559446c4eb039031bf2a668da533980dd9f13cbc258c6e 25.17MB / 64.80MB 1.0s
-#9 sha256:d3b15c10cb0f03c9f8ab45e4fc08d68d59491a6ba80d4f878ebfa23c8a9c4362 7.34MB / 23.05MB 1.0s
-#9 sha256:a838507c70456b68b3559446c4eb039031bf2a668da533980dd9f13cbc258c6e 40.89MB / 64.80MB 1.2s
-#9 sha256:d3b15c10cb0f03c9f8ab45e4fc08d68d59491a6ba80d4f878ebfa23c8a9c4362 23.05MB / 23.05MB 1.2s
-#9 sha256:a838507c70456b68b3559446c4eb039031bf2a668da533980dd9f13cbc258c6e 52.43MB / 64.80MB 1.3s
-#9 sha256:d3b15c10cb0f03c9f8ab45e4fc08d68d59491a6ba80d4f878ebfa23c8a9c4362 23.05MB / 23.05MB 1.2s done
-#9 sha256:a838507c70456b68b3559446c4eb039031bf2a668da533980dd9f13cbc258c6e 61.87MB / 64.80MB 1.4s
-#9 sha256:a838507c70456b68b3559446c4eb039031bf2a668da533980dd9f13cbc258c6e 64.80MB / 64.80MB 1.5s done
-#9 ...
-
-#7 [uv 1/1] FROM ghcr.io/astral-sh/uv:0.8.15@sha256:a5727064a0de127bdb7c9d3c1383f3a9ac307d9f2d8a391edc7896c54289ced0
-#7 sha256:a5727064a0de127bdb7c9d3c1383f3a9ac307d9f2d8a391edc7896c54289ced0 2.19kB / 2.19kB done
-#7 sha256:1ececcacbbde240ffca54d400df86e4fdd38f29c1a2366299279d197e92eaed3 669B / 669B done
-#7 sha256:b41f16da0a4ff28eaba924250b5c0600dea70fe45f025c028440903b649e7009 1.30kB / 1.30kB done
-#7 sha256:b5c1d8a02beb46ee3f43053f7563d00d605bb930f63bfbcececd04a7455f5b80 21.39MB / 21.39MB 0.6s done
-#7 sha256:62e48a8cb359f6e3f4375bbaac58fc12a40797b94590ce447f61d2f3f190c493 98B / 98B 0.5s done
-#7 extracting sha256:b5c1d8a02beb46ee3f43053f7563d00d605bb930f63bfbcececd04a7455f5b80 1.4s done
-#7 extracting sha256:62e48a8cb359f6e3f4375bbaac58fc12a40797b94590ce447f61d2f3f190c493 done
-#7 DONE 2.5s
-
-#8 [builder 1/2] FROM public.ecr.aws/lambda/python:3.13@sha256:1618ba836b700c8bf3daa2637e0949a323724bfca49b751a4ff4614295da9402
-#8 sha256:2c246d9c8dfff2e3edacc7397e09507aa4334f045817569c945e36e62bd440ba 416B / 416B 0.1s done
-#8 sha256:41fbc877d8680baeffd121097d9ee90744610d0e5c518fadfec273309bb953a0 1.58kB / 1.58kB done
-#8 sha256:261756bd1a975bdc797ece9842cb8c35a9f90b829bbc617d3bd31c695b5f9748 36.76MB / 36.76MB 0.2s done
-#8 sha256:6aa49205a964781a82b0e3f9411ca260714bd3ece7b45b1d7ce24bc4b18d823f 88.13kB / 88.13kB 0.1s done
-#8 sha256:1618ba836b700c8bf3daa2637e0949a323724bfca49b751a4ff4614295da9402 772B / 772B done
-#8 sha256:b7d3cdfbb732fe6d1099312f213fad0b0f32833c188c1761642332f416729a7c 4.65kB / 4.65kB done
-#8 sha256:cf3f8ccf59bb8a5521b534e49ed2704708ee64e1e932f781f054797204e9d4ef 2.96MB / 2.96MB 0.2s done
-#8 sha256:b04a5db728bd1ab1c35788bd461a5858bfe51e6282d8f9bc05ac037620b26763 155.01MB / 155.01MB 1.7s done
-#8 sha256:36b929a4ae1df723145f8cf737b0a8823400d51e6a098268befa84ce872baadf 14.19kB / 14.19kB 0.3s done
-#8 extracting sha256:261756bd1a975bdc797ece9842cb8c35a9f90b829bbc617d3bd31c695b5f9748 2.7s done
-#8 extracting sha256:6aa49205a964781a82b0e3f9411ca260714bd3ece7b45b1d7ce24bc4b18d823f done
-#8 extracting sha256:2c246d9c8dfff2e3edacc7397e09507aa4334f045817569c945e36e62bd440ba done
-#8 extracting sha256:cf3f8ccf59bb8a5521b534e49ed2704708ee64e1e932f781f054797204e9d4ef 0.1s
-#8 extracting sha256:cf3f8ccf59bb8a5521b534e49ed2704708ee64e1e932f781f054797204e9d4ef 0.1s done
-#8 extracting sha256:b04a5db728bd1ab1c35788bd461a5858bfe51e6282d8f9bc05ac037620b26763
-#8 extracting sha256:b04a5db728bd1ab1c35788bd461a5858bfe51e6282d8f9bc05ac037620b26763 5.1s
-#8 ...
-
-#9 [nodejs 1/2] FROM public.ecr.aws/lambda/nodejs:22@sha256:8d25e3128e34b3c75dd15dca017fa512d05ea7e036ba47976ca7c14462fe9f7c
+#9 extracting sha256:261756bd1a975bdc797ece9842cb8c35a9f90b829bbc617d3bd31c695b5f9748 2.6s done
 #9 extracting sha256:34a57df743c3516c5e5d6ebf8b30d6c20034d81ec2cfffccb00a8f1bd9b45aa7 done
 #9 extracting sha256:801d98b6019ef74775f456673b60226088f4aef82d52ed2741dee9b158a3d552 done
 #9 extracting sha256:cf3f8ccf59bb8a5521b534e49ed2704708ee64e1e932f781f054797204e9d4ef 0.1s done
-#9 extracting sha256:a838507c70456b68b3559446c4eb039031bf2a668da533980dd9f13cbc258c6e 3.4s done
-#9 extracting sha256:d3b15c10cb0f03c9f8ab45e4fc08d68d59491a6ba80d4f878ebfa23c8a9c4362 3.8s done
-#9 DONE 10.8s
+#9 extracting sha256:a838507c70456b68b3559446c4eb039031bf2a668da533980dd9f13cbc258c6e 3.5s done
+#9 extracting sha256:d3b15c10cb0f03c9f8ab45e4fc08d68d59491a6ba80d4f878ebfa23c8a9c4362 3.0s
+#9 ...
 
-#8 [builder 1/2] FROM public.ecr.aws/lambda/python:3.13@sha256:1618ba836b700c8bf3daa2637e0949a323724bfca49b751a4ff4614295da9402
-#8 ...
+#7 [builder 1/2] FROM public.ecr.aws/lambda/python:3.13@sha256:1618ba836b700c8bf3daa2637e0949a323724bfca49b751a4ff4614295da9402
+#7 ...
+
+#9 [nodejs 1/2] FROM public.ecr.aws/lambda/nodejs:22@sha256:8d25e3128e34b3c75dd15dca017fa512d05ea7e036ba47976ca7c14462fe9f7c
+#9 extracting sha256:d3b15c10cb0f03c9f8ab45e4fc08d68d59491a6ba80d4f878ebfa23c8a9c4362 4.0s done
+#9 DONE 11.3s
+
+#7 [builder 1/2] FROM public.ecr.aws/lambda/python:3.13@sha256:1618ba836b700c8bf3daa2637e0949a323724bfca49b751a4ff4614295da9402
+#7 extracting sha256:b04a5db728bd1ab1c35788bd461a5858bfe51e6282d8f9bc05ac037620b26763 7.9s done
+#7 extracting sha256:36b929a4ae1df723145f8cf737b0a8823400d51e6a098268befa84ce872baadf done
+#7 DONE 11.7s
 
 #10 [nodejs 2/2] RUN npm install -g @modelcontextprotocol/sdk
 #10 ...
 
-#8 [builder 1/2] FROM public.ecr.aws/lambda/python:3.13@sha256:1618ba836b700c8bf3daa2637e0949a323724bfca49b751a4ff4614295da9402
-#8 extracting sha256:b04a5db728bd1ab1c35788bd461a5858bfe51e6282d8f9bc05ac037620b26763 7.8s done
-#8 extracting sha256:36b929a4ae1df723145f8cf737b0a8823400d51e6a098268befa84ce872baadf done
-#8 DONE 11.6s
-
 #11 [builder 2/2] RUN --mount=from=uv,source=/uv,target=/bin/uv     --mount=type=cache,target=/root/.cache/uv     --mount=type=bind,source=uv.lock,target=uv.lock     --mount=type=bind,source=pyproject.toml,target=pyproject.toml     uv export --frozen --no-emit-workspace --no-dev --no-editable -o requirements.txt &&     uv pip install -r requirements.txt --target "/var/task"
-#11 0.335 error: Failed to parse `uv.lock`
-#11 0.335   Caused by: TOML parse error at line 1, column 1
-#11 0.335   |
-#11 0.335 1 | version = 1
-#11 0.335   | ^
-#11 0.335 missing field `requires-python`
-#11 ERROR: process "/bin/sh -c uv export --frozen --no-emit-workspace --no-dev --no-editable -o requirements.txt &&     uv pip install -r requirements.txt --target \"${LAMBDA_TASK_ROOT}\"" did not complete successfully: exit code: 2
+#11 0.356 
+#11 0.356 thread 'main2' panicked at /root/crates/uv-resolver/src/lock/export/mod.rs:77:18:
+#11 0.356 could not find root
+#11 0.356 note: run with `RUST_BACKTRACE=1` environment variable to display a backtrace
+#11 0.357 
+#11 0.357 thread 'main' panicked at /root/crates/uv/src/lib.rs:2401:10:
+#11 0.357 Tokio executor failed, was there a panic?: Any { .. }
+#11 ERROR: process "/bin/sh -c uv export --frozen --no-emit-workspace --no-dev --no-editable -o requirements.txt &&     uv pip install -r requirements.txt --target \"${LAMBDA_TASK_ROOT}\"" did not complete successfully: exit code: 101
 
 #10 [nodejs 2/2] RUN npm install -g @modelcontextprotocol/sdk
 #10 CANCELED
 ------
  > [builder 2/2] RUN --mount=from=uv,source=/uv,target=/bin/uv     --mount=type=cache,target=/root/.cache/uv     --mount=type=bind,source=uv.lock,target=uv.lock     --mount=type=bind,source=pyproject.toml,target=pyproject.toml     uv export --frozen --no-emit-workspace --no-dev --no-editable -o requirements.txt &&     uv pip install -r requirements.txt --target "/var/task":
-: Failed to parse `uv.lock`
-0.335   Caused by: TOML parse error at line 1, column 1
-0.335   |
-0.335 1 | version = 1
-0.335   | ^
-0.335 missing field `requires-python`
+0.356 
+0.356 thread 'main2' panicked at /root/crates/uv-resolver/src/lock/export/mod.rs:77:18:
+0.356 could not find root
+0.356 note: run with `RUST_BACKTRACE=1` environment variable to display a backtrace
+0.357 
+0.357 thread 'main' panicked at /root/crates/uv/src/lib.rs:2401:10:
+0.357 Tokio executor failed, was there a panic?: Any { .. }
 ------
 python3.13:25
 --------------------
@@ -183,8 +192,8 @@ python3.13:25
   30 | >>>     uv pip install -r requirements.txt --target "${LAMBDA_TASK_ROOT}"
   31 |     
 --------------------
-ERROR: failed to solve: process "/bin/sh -c uv export --frozen --no-emit-workspace --no-dev --no-editable -o requirements.txt &&     uv pip install -r requirements.txt --target \"${LAMBDA_TASK_ROOT}\"" did not complete successfully: exit code: 2
+ERROR: failed to solve: process "/bin/sh -c uv export --frozen --no-emit-workspace --no-dev --no-editable -o requirements.txt &&     uv pip install -r requirements.txt --target \"${LAMBDA_TASK_ROOT}\"" did not complete successfully: exit code: 101
 
-[Container] 2025/09/11 02:20:24.861118 Command did not exit successfully docker buildx build --provenance=false --platform linux/amd64 --build-arg INSTALL_COMMAND="${BUILD_ARG_INSTALL_COMMAND}" --build-arg BUILD_COMMAND="${BUILD_ARG_BUILD_COMMAND}" --build-arg BUILD_OUTPUT_DIR="${BUILD_ARG_BUILD_OUTPUT_DIR}" --build-arg START_COMMAND="${BUILD_ARG_START_COMMAND}" --build-arg TRANSPORT_TYPE=$TRANSPORT_TYPE -t $PROJECT_BUILD_IMAGES_REPOSITORY_URI:$RESOLVED_SOURCE_VERSION -t $PROJECT_BUILD_IMAGES_REPOSITORY_URI:latest -f $CODEBUILD_SRC_DIR_DOCKERFILES/$RUNTIME $SRC_DIR exit status 1
-[Container] 2025/09/11 02:20:24.867014 Phase complete: BUILD State: FAILED_WITH_ABORT
-[Container] 2025/09/11 02:20:24.867031 Phase context status code: COMMAND_EXECUTION_ERROR Message: Error while executing command: docker buildx build --provenance=false --platform linux/amd64 --build-arg INSTALL_COMMAND="${BUILD_ARG_INSTALL_COMMAND}" --build-arg BUILD_COMMAND="${BUILD_ARG_BUILD_COMMAND}" --build-arg BUILD_OUTPUT_DIR="${BUILD_ARG_BUILD_OUTPUT_DIR}" --build-arg START_COMMAND="${BUILD_ARG_START_COMMAND}" --build-arg TRANSPORT_TYPE=$TRANSPORT_TYPE -t $PROJECT_BUILD_IMAGES_REPOSITORY_URI:$RESOLVED_SOURCE_VERSION -t $PROJECT_BUILD_IMAGES_REPOSITORY_URI:latest -f $CODEBUILD_SRC_DIR_DOCKERFILES/$RUNTIME $SRC_DIR. Reason: exit status 1
+[Container] 2025/09/11 02:23:16.088844 Command did not exit successfully docker buildx build --provenance=false --platform linux/amd64 --build-arg INSTALL_COMMAND="${BUILD_ARG_INSTALL_COMMAND}" --build-arg BUILD_COMMAND="${BUILD_ARG_BUILD_COMMAND}" --build-arg BUILD_OUTPUT_DIR="${BUILD_ARG_BUILD_OUTPUT_DIR}" --build-arg START_COMMAND="${BUILD_ARG_START_COMMAND}" --build-arg TRANSPORT_TYPE=$TRANSPORT_TYPE -t $PROJECT_BUILD_IMAGES_REPOSITORY_URI:$RESOLVED_SOURCE_VERSION -t $PROJECT_BUILD_IMAGES_REPOSITORY_URI:latest -f $CODEBUILD_SRC_DIR_DOCKERFILES/$RUNTIME $SRC_DIR exit status 1
+[Container] 2025/09/11 02:23:16.095025 Phase complete: BUILD State: FAILED_WITH_ABORT
+[Container] 2025/09/11 02:23:16.095046 Phase context status code: COMMAND_EXECUTION_ERROR Message: Error while executing command: docker buildx build --provenance=false --platform linux/amd64 --build-arg INSTALL_COMMAND="${BUILD_ARG_INSTALL_COMMAND}" --build-arg BUILD_COMMAND="${BUILD_ARG_BUILD_COMMAND}" --build-arg BUILD_OUTPUT_DIR="${BUILD_ARG_BUILD_OUTPUT_DIR}" --build-arg START_COMMAND="${BUILD_ARG_START_COMMAND}" --build-arg TRANSPORT_TYPE=$TRANSPORT_TYPE -t $PROJECT_BUILD_IMAGES_REPOSITORY_URI:$RESOLVED_SOURCE_VERSION -t $PROJECT_BUILD_IMAGES_REPOSITORY_URI:latest -f $CODEBUILD_SRC_DIR_DOCKERFILES/$RUNTIME $SRC_DIR. Reason: exit status 1
