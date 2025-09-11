@@ -3,25 +3,28 @@ version = 1
 
 [metadata]
 lock-format = "simple"
-root = "warp-engine"
+
+[metadata.root]
+name = "warp-engine"
+version = "2.0.0"
+source = { directory = ".", editable = true }
 
 [[package]]
 name = "warp-engine"
 version = "2.0.0"
 source = { directory = ".", editable = true }
-# Declare direct dependencies so the exporter can resolve
 dependencies = [
-  "fastapi==0.111.0",
-  "uvicorn==0.29.0",
-  "pydantic==2.7.0",
-  "requests==2.31.0",
-  "python-multipart==0.0.9",
-  "websockets==12.0",
-  "openai==1.0.0",
-  "python-dotenv==1.0.0",
-  "pyyaml==6.0.1",
-  "rich==13.7.1",
-  "aiofiles==23.2.1",
+  { name = "fastapi", version = "0.111.0" },
+  { name = "uvicorn", version = "0.29.0" },
+  { name = "pydantic", version = "2.7.0" },
+  { name = "requests", version = "2.31.0" },
+  { name = "python-multipart", version = "0.0.9" },
+  { name = "websockets", version = "12.0" },
+  { name = "openai", version = "1.0.0" },
+  { name = "python-dotenv", version = "1.0.0" },
+  { name = "pyyaml", version = "6.0.1" },
+  { name = "rich", version = "13.7.1" },
+  { name = "aiofiles", version = "23.2.1" },
 ]
 
 [[package]]
