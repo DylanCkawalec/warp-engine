@@ -1,48 +1,48 @@
-[Container] 2025/09/11 01:51:59.103840 Running on CodeBuild On-demand
-[Container] 2025/09/11 01:51:59.103850 Waiting for agent ping
-[Container] 2025/09/11 01:51:59.204931 Waiting for DOWNLOAD_SOURCE
-[Container] 2025/09/11 01:52:00.645365 Phase is DOWNLOAD_SOURCE
-[Container] 2025/09/11 01:52:00.646581 CODEBUILD_SRC_DIR=/codebuild/output/src2418/src
-[Container] 2025/09/11 01:52:00.646688 CODEBUILD_SRC_DIR_HANDLERS=/codebuild/output/src2418/src/s3/02
-[Container] 2025/09/11 01:52:00.646756 CODEBUILD_SRC_DIR_DOCKERFILES=/codebuild/output/src2418/src/s3/01
-[Container] 2025/09/11 01:52:00.647334 YAML location is /codebuild/readonly/buildspec.yml
-[Container] 2025/09/11 01:52:00.651588 Processing environment variables
-[Container] 2025/09/11 01:52:00.880851 No runtime version selected in buildspec.
-[Container] 2025/09/11 01:52:00.915288 Moving to directory /codebuild/output/src2418/src
-[Container] 2025/09/11 01:52:00.915310 Cache is not defined in the buildspec
-[Container] 2025/09/11 01:52:00.952129 Skip cache due to: no paths specified to be cached
-[Container] 2025/09/11 01:52:00.952505 Registering with agent
-[Container] 2025/09/11 01:52:00.986979 Phases found in YAML: 3
-[Container] 2025/09/11 01:52:00.986998  PRE_BUILD: 7 commands
-[Container] 2025/09/11 01:52:00.987003  BUILD: 2 commands
-[Container] 2025/09/11 01:52:00.987007  POST_BUILD: 11 commands
-[Container] 2025/09/11 01:52:00.987252 Phase complete: DOWNLOAD_SOURCE State: SUCCEEDED
-[Container] 2025/09/11 01:52:00.987264 Phase context status code:  Message: 
-[Container] 2025/09/11 01:52:01.103931 Entering phase INSTALL
-[Container] 2025/09/11 01:52:01.141713 Phase complete: INSTALL State: SUCCEEDED
-[Container] 2025/09/11 01:52:01.141735 Phase context status code:  Message: 
-[Container] 2025/09/11 01:52:01.177906 Entering phase PRE_BUILD
-[Container] 2025/09/11 01:52:01.214233 Running command export SRC_DIR="$CODEBUILD_SRC_DIR/$SOURCE_REPOSITORY"
+[Container] 2025/09/11 02:00:06.807931 Running on CodeBuild On-demand
+[Container] 2025/09/11 02:00:06.807946 Waiting for agent ping
+[Container] 2025/09/11 02:00:06.909026 Waiting for DOWNLOAD_SOURCE
+[Container] 2025/09/11 02:00:08.280109 Phase is DOWNLOAD_SOURCE
+[Container] 2025/09/11 02:00:08.281191 CODEBUILD_SRC_DIR=/codebuild/output/src3799/src
+[Container] 2025/09/11 02:00:08.281358 CODEBUILD_SRC_DIR_DOCKERFILES=/codebuild/output/src3799/src/s3/01
+[Container] 2025/09/11 02:00:08.281452 CODEBUILD_SRC_DIR_HANDLERS=/codebuild/output/src3799/src/s3/02
+[Container] 2025/09/11 02:00:08.281993 YAML location is /codebuild/readonly/buildspec.yml
+[Container] 2025/09/11 02:00:08.286347 Processing environment variables
+[Container] 2025/09/11 02:00:08.473388 No runtime version selected in buildspec.
+[Container] 2025/09/11 02:00:08.500621 Moving to directory /codebuild/output/src3799/src
+[Container] 2025/09/11 02:00:08.500645 Cache is not defined in the buildspec
+[Container] 2025/09/11 02:00:08.534628 Skip cache due to: no paths specified to be cached
+[Container] 2025/09/11 02:00:08.534993 Registering with agent
+[Container] 2025/09/11 02:00:08.569201 Phases found in YAML: 3
+[Container] 2025/09/11 02:00:08.569223  PRE_BUILD: 7 commands
+[Container] 2025/09/11 02:00:08.569229  BUILD: 2 commands
+[Container] 2025/09/11 02:00:08.569233  POST_BUILD: 11 commands
+[Container] 2025/09/11 02:00:08.569765 Phase complete: DOWNLOAD_SOURCE State: SUCCEEDED
+[Container] 2025/09/11 02:00:08.569778 Phase context status code:  Message: 
+[Container] 2025/09/11 02:00:08.669127 Entering phase INSTALL
+[Container] 2025/09/11 02:00:08.701698 Phase complete: INSTALL State: SUCCEEDED
+[Container] 2025/09/11 02:00:08.701718 Phase context status code:  Message: 
+[Container] 2025/09/11 02:00:08.737356 Entering phase PRE_BUILD
+[Container] 2025/09/11 02:00:08.771452 Running command export SRC_DIR="$CODEBUILD_SRC_DIR/$SOURCE_REPOSITORY"
 
-[Container] 2025/09/11 01:52:01.227665 Running command git clone --single-branch --branch $SOURCE_BRANCH https://x-access-token:$SOURCE_REPOSITORY_CREDENTIALS@$SOURCE_REPOSITORY.git $SRC_DIR
-Cloning into '/codebuild/output/src2418/src/github.com/DylanCkawalec/warp-engine'...
+[Container] 2025/09/11 02:00:08.776014 Running command git clone --single-branch --branch $SOURCE_BRANCH https://x-access-token:$SOURCE_REPOSITORY_CREDENTIALS@$SOURCE_REPOSITORY.git $SRC_DIR
+Cloning into '/codebuild/output/src3799/src/github.com/DylanCkawalec/warp-engine'...
 
-[Container] 2025/09/11 01:52:02.861084 Running command export RESOLVED_SOURCE_VERSION=$(git -C $SRC_DIR rev-parse HEAD)
+[Container] 2025/09/11 02:00:10.456532 Running command export RESOLVED_SOURCE_VERSION=$(git -C $SRC_DIR rev-parse HEAD)
 
-[Container] 2025/09/11 01:52:02.867941 Running command aws ecr get-login-password | docker login --username AWS --password-stdin $PROJECT_BUILD_IMAGES_REPOSITORY_URI
+[Container] 2025/09/11 02:00:10.461950 Running command aws ecr get-login-password | docker login --username AWS --password-stdin $PROJECT_BUILD_IMAGES_REPOSITORY_URI
 WARNING! Your password will be stored unencrypted in /root/.docker/config.json.
 Configure a credential helper to remove this warning. See
 https://docs.docker.com/engine/reference/commandline/login/#credential-stores
 
 Login Succeeded
 
-[Container] 2025/09/11 01:52:15.495715 Running command cp -r $CODEBUILD_SRC_DIR_HANDLERS $SRC_DIR/alpic
+[Container] 2025/09/11 02:00:22.737864 Running command cp -r $CODEBUILD_SRC_DIR_HANDLERS $SRC_DIR/alpic
 
-[Container] 2025/09/11 01:52:15.502686 Running command export TRANSPORT_TYPE=$( (grep -r "import.*from ['\"]@modelcontextprotocol/sdk/server/\(stdio\|sse\|streamableHttp\)[.'\"]" --include="*.ts" . | grep -o -E "(stdio|sse|streamableHttp)" | head -1 | tr '[:upper:]' '[:lower:]';grep -r "mcp.run(.*transport=['\"]\(stdio\|sse\|streamable-http\|http\)['\"]" --include="*.py" . | grep -o -E "(stdio|sse|streamable-http|http)" | head -1;grep -r "mcp.run(" --include="*.py" . | head -1 | sed 's/.*/stdio/') | head -1)
+[Container] 2025/09/11 02:00:22.742912 Running command export TRANSPORT_TYPE=$( (grep -r "import.*from ['\"]@modelcontextprotocol/sdk/server/\(stdio\|sse\|streamableHttp\)[.'\"]" --include="*.ts" . | grep -o -E "(stdio|sse|streamableHttp)" | head -1 | tr '[:upper:]' '[:lower:]';grep -r "mcp.run(.*transport=['\"]\(stdio\|sse\|streamable-http\|http\)['\"]" --include="*.py" . | grep -o -E "(stdio|sse|streamable-http|http)" | head -1;grep -r "mcp.run(" --include="*.py" . | head -1 | sed 's/.*/stdio/') | head -1)
 
-[Container] 2025/09/11 01:52:15.601225 Running command if [ -z "$TRANSPORT_TYPE" ]; then echo "Error: No MCP transport found"; exit 1; else echo "MCP transport: $TRANSPORT_TYPE"; fi
+[Container] 2025/09/11 02:00:22.824967 Running command if [ -z "$TRANSPORT_TYPE" ]; then echo "Error: No MCP transport found"; exit 1; else echo "MCP transport: $TRANSPORT_TYPE"; fi
 Error: No MCP transport found
 
-[Container] 2025/09/11 01:52:15.606284 Command did not exit successfully if [ -z "$TRANSPORT_TYPE" ]; then echo "Error: No MCP transport found"; exit 1; else echo "MCP transport: $TRANSPORT_TYPE"; fi exit status 1
-[Container] 2025/09/11 01:52:15.610149 Phase complete: PRE_BUILD State: FAILED
-[Container] 2025/09/11 01:52:15.610163 Phase context status code: COMMAND_EXECUTION_ERROR Message: Error while executing command: if [ -z "$TRANSPORT_TYPE" ]; then echo "Error: No MCP transport found"; exit 1; else echo "MCP transport: $TRANSPORT_TYPE"; fi. Reason: exit status 1
+[Container] 2025/09/11 02:00:22.828153 Command did not exit successfully if [ -z "$TRANSPORT_TYPE" ]; then echo "Error: No MCP transport found"; exit 1; else echo "MCP transport: $TRANSPORT_TYPE"; fi exit status 1
+[Container] 2025/09/11 02:00:22.831705 Phase complete: PRE_BUILD State: FAILED
+[Container] 2025/09/11 02:00:22.831723 Phase context status code: COMMAND_EXECUTION_ERROR Message: Error while executing command: if [ -z "$TRANSPORT_TYPE" ]; then echo "Error: No MCP transport found"; exit 1; else echo "MCP transport: $TRANSPORT_TYPE"; fi. Reason: exit status 1

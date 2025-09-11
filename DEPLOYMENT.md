@@ -34,8 +34,8 @@ WARP_ENGINE_TEMPERATURE=0.7
 
 ```
 warp-engine/
-├── main.py                 # Entry point for deployment
-├── requirements.txt        # Production dependencies
+├── deploy.py              # Deployment entry point
+├── requirements.txt       # Production dependencies
 ├── pyproject.toml         # Package configuration
 ├── src/
 │   └── warpengine/        # Main package
@@ -49,14 +49,14 @@ warp-engine/
 1. Connect your GitHub repository
 2. Set environment variables in Railway dashboard
 3. Build command: `pip install -r requirements.txt`
-4. Start command: `python main.py`
+4. Start command: `python deploy.py`
 5. Port: `8787`
 
 #### **Render:**
 1. Create new Web Service
 2. Connect GitHub repository
 3. Build command: `pip install -r requirements.txt`
-4. Start command: `python main.py`
+4. Start command: `python deploy.py`
 5. Environment: `Python 3`
 
 #### **Heroku:**
